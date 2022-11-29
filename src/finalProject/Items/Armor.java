@@ -14,7 +14,7 @@ public class Armor extends Item{
 
     /*
      * 1 - helmet
-     * 2 - chestplate
+     * 2 - chest-plate
      * 3 - leggings
      * 4 - boots
      * TODO split charm from armor?
@@ -26,17 +26,14 @@ public class Armor extends Item{
         return armorType;
     }
 
-
-    public Armor(String name, int armorType, int healthInc, int price) {
-        this.name = name;
-        this.healthInc = healthInc;
-        this.price = price;
-        this.armorType = armorType;
-    }
-
     public int getInc() {
         return healthInc;
     }
 
-
+    public Armor(String name, int armorType, int healthInc, int price) {
+        this.name = name;
+        this.healthInc = healthInc;
+        this.armorType = armorType;
+        this.price = price;
+    }
 }

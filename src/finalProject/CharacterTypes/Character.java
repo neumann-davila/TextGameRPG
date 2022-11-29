@@ -109,7 +109,24 @@ public class Character {
 
 										//	---Inventory Methods---	\\
 
-	public void EquipWeapon() {
+
+	public Inventory getInventory() {
+		return inventory;
+	}
+	public Weapon getEquippedWeapon() {
+		return inventory.getEquippedWeapon();
+	}
+	public void removeItem(int index) {
+		if(inventory.getItem(index - 1) instanceof Weapon) {
+			inventory.removeItem(index -1);
+			equipWeapon();
+		}
+		else {
+			inventory.removeItem(index -1);
+		}
+	}
+
+	public void equipWeapon() {
 		ArrayList<Weapon> weapons = inventory.getWeapons();
 
 		if(weapons.size() == 0) {
@@ -134,7 +151,7 @@ public class Character {
 
 		if(discardIndex < 9) {
 			Event confirmDiscard = new Event("Are you sure you want to discard:\n" + inventory.getItem(discardIndex - 1), false);
-			confirmDiscard.addChoice(new Choice("Yes", () -> {inventory.removeItem(discardIndex);}));
+			confirmDiscard.addChoice(new Choice("Yes", () -> {removeItem(discardIndex);}));
 			confirmDiscard.addChoice(new Choice("No", () -> {}));
 			confirmDiscard.displayEvent();
 
@@ -156,7 +173,7 @@ public class Character {
 			Item tempItem = inventory.getItem(discardIndex - 1);
 			
 			Event confirmGive = new Event("Are you sure you want to give:\n" + tempItem, false);
-			confirmGive.addChoice(new Choice("Yes", () -> {recipiant.receiveItem(stats.getFriendStat(recipiant), tempItem);inventory.removeItem(discardIndex);}));
+			confirmGive.addChoice(new Choice("Yes", () -> {recipiant.receiveItem(stats.getFriendStat(recipiant), tempItem);removeItem(discardIndex);}));
 			confirmGive.addChoice(new Choice("No", () -> {}));
 			
 			confirmGive.displayEvent();
@@ -179,7 +196,7 @@ public class Character {
 			
 			if(stealIndex < 9 && stealIndex > 0) {
 				recipiant.addItem(inventory.getItem(stealIndex - 1));
-				inventory.removeItem(stealIndex);
+				removeItem(stealIndex);
 				
 			}
 			else if (stealIndex == 9) {
@@ -193,6 +210,10 @@ public class Character {
 		else {
 			System.out.println("Failed");
 		}
+	}
+
+	public void purchaseItem(Item item) {
+		inventory.purchaseItem(item);
 	}
 
 								//	---Constructors---  \\

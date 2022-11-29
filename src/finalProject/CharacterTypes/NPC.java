@@ -92,12 +92,13 @@ public class NPC extends Character {
 		}
 	}
 		
-	@Override public void EquipWeapon() {
-		if(getWeapons().size() == 0) {
-			setEquippedWeapon(new Weapon());
+	@Override public void equipWeapon() {
+		ArrayList<Weapon> weapons = inventory.getWeapons();
+		if(weapons.size() == 0) {
+			inventory.setEquippedWeapon(new Weapon());
 		}
-		else if (getWeapons().size() == 1){
-			setEquippedWeapon(getWeapons().get(0));
+		else if (weapons.size() == 1){
+			inventory.setEquippedWeapon(weapons.get(0));
 		}
 		else {
 			//	cycling through weapons or attack type

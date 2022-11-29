@@ -3,8 +3,12 @@
  * Date:   Nov 21, 2022
  * Description:
  *
+ * This object stores Item objects for the player or NPC so that I can keep track of
+ * what the Character has on their person. This also manages money weapons, and armor that
+ * linked to the character
  *
  */
+
 package finalProject.CharacterTypes;
 
 import finalProject.EventStructure.Choice;
@@ -19,8 +23,16 @@ public class Inventory {
 
     private int lastEmptyCell;
     private Item[] inventory = new Item[8];
+    private Event displayInventory = new Event("What would you like to do in your inventory", false);
+    Choice exit = new Choice("Exit", () -> {});
+
+    //TODO create item interaction feature to eliminate unnecessary ArrayLists
+
+                        //  ---Equippable Items---  \\
     private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
     private Weapon equippedWeapon = null;
+
+                        //  ---Money---  \\
     private int money = 0;
 
     public String toString() {
@@ -31,24 +43,58 @@ public class Inventory {
         return summary;
     }
 
+    public void interact(int index) {
+        Item tempItem = inventory[index];
+        System.out.println(index);
+        Event interact = new Event("What would you like to do with " + tempItem, false);
+                //  Creates discard method
+        Event confirmDis = new Event("Are you sure you want to discard: " + tempItem, false);
+        confirmDis.addChoice(new Choice("Yes", () -> {removeItem(index);}));
+        confirmDis.addChoice(new Choice("No", () -> {}));
+
+        interact.addChoice(new Choice("Discard",() -> {confirmDis.displayEvent();interact(index);}));
+
+        System.out.println(tempItem);
+        if(tempItem instanceof Weapon) {
+            interact.addChoice(new Choice("Equip " + tempItem, () -> {setEquippedWeapon((Weapon) tempItem);}));
+        }
+        else if (tempItem instanceof Armor) {
+
+        }
+
+        interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);display();}));
+
+        interact.displayEvent();
+    }
+
+    // Displays the Inventory & adds the exit choice inventory Event and later removes it
+    public void display() {
+        displayInventory.addChoice(exit);
+
+        displayInventory.displayEvent();
+
+        displayInventory.removeChoice(exit);
+    }
+    public Item[] getInventory() {
+        return this.inventory;
+    }
     public Item getItem(int index) {
         return inventory[index];
     }
 
     public void removeItem(int index) {
-        if(inventory[index - 1] instanceof Weapon) {
-            if(this.equippedWeapon == inventory[index - 1]) {
-                weapons.remove(inventory[index - 1]);
+        if(inventory[index] instanceof Weapon) {
+            if(this.equippedWeapon == inventory[index]) {
+                weapons.remove(inventory[index]);
                 inventory[index - 1] = null;
-                EquipWeapon();
             }
             else {
-                weapons.remove(inventory[index - 1]);
-                inventory[index - 1] = null;
+                weapons.remove(inventory[index]);
+                inventory[index] = null;
             }
         }
         else {
-            inventory[index - 1] = null;
+            inventory[index] = null;
         }
 
         for(int i = 0; i < lastEmptyCell; i++) {
@@ -60,12 +106,14 @@ public class Inventory {
         lastEmptyCell--;
     }
 
-
     public void addItem(Item newItem) {
 
         if(!newItem.isStackable()) {
             if(lastEmptyCell < 8) {
+                System.out.println("" + newItem);
                 this.inventory[this.lastEmptyCell] = newItem;
+                int tempInt = lastEmptyCell;
+                displayInventory.addChoice(new Choice("" + newItem,() -> {interact(tempInt);}));
                 this.lastEmptyCell += 1;
 
 
@@ -75,7 +123,6 @@ public class Inventory {
                         equippedWeapon = (Weapon) newItem;
                     }
                 }
-
             }
             else {
                 System.out.println("You have no space in your inventory!");
@@ -102,8 +149,6 @@ public class Inventory {
     public Weapon getEquippedWeapon() {
         return this.equippedWeapon;
     }
-
-
 
     public ArrayList<Weapon> getWeapons() {
         return this.weapons;
@@ -132,6 +177,5 @@ public class Inventory {
     }
 
     public Inventory() {
-
     }
 }

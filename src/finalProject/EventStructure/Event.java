@@ -81,13 +81,14 @@ public class Event {
 		//	Inventory event built into every event object if the method is called
 	public void inventoryEvent() {
 		ArrayList<Choice> inventoryChoices = new ArrayList<Choice>();
-		inventoryChoices.add(new Choice("Discard Item", () -> {TextGame.player.discardItem();displayEvent();}));
-		inventoryChoices.add(new Choice("Change Equipped Weapon", () -> {TextGame.player.EquipWeapon();}));
-		inventoryChoices.add(new Choice("Exit Inventory", () -> {displayEvent();}));
-		
-		TextGame.player.displayInventory();
-		
-		System.out.println("What would you like to do in your Inventory?");
+		Item[] inventory = TextGame.player.getInventory().getInventory();
+
+		for(int i = 0; i < inventory.length;i++) {
+			inventoryChoices.add(new Choice("" + inventory[i], () -> {}));
+		}
+
+
+		System.out.println(TextGame.player.getInventory() + "What item would you like to interact with?");
 		
 		for(int i = 1; i < inventoryChoices.size() + 1;i++ ) {
 			System.out.println(i + ": " + inventoryChoices.get(i - 1));
@@ -162,7 +163,7 @@ public class Event {
 	public void combatEvent(NPC enemy) {
 		ArrayList<Choice> combatChoices = new ArrayList<Choice>();
 		combatChoices.add(new Choice("Attack: " + TextGame.player.getEquippedWeapon(), () -> {TextGame.player.attack(enemy);enemy.attack(TextGame.player);}));
-		combatChoices.add(new Choice("Switch Weapons", () -> {TextGame.player.EquipWeapon();combatEvent(enemy);}));
+		combatChoices.add(new Choice("Switch Weapons", () -> {TextGame.player.equipWeapon();combatEvent(enemy);}));
 		combatChoices.add(new Choice("Use your surroundings", () -> {}));
 		combatChoices.add(new Choice("Run", () -> {if(TextGame.player.getStats().rollDexterity(enemy.getStats().getDexterity())) {System.out.println("You ran");displayEvent();} else {System.out.println("Failed"); enemy.attack(TextGame.player);}}));
 
@@ -201,6 +202,11 @@ public class Event {
 	public void addChoice(Choice choice) {
 		this.eventChoices.add(choice);
 	}
+
+	public void removeChoice(Choice choice) {
+		this.eventChoices.remove(choice);
+	}
+
 		//	Collects and runs the decision for the event 
 	public void getDecision() {
 		try {
@@ -217,22 +223,18 @@ public class Event {
 	
 	public Event() {
 		this.description = "\033[0;34mtest \033[0m";
-		eventChoices.add(new Choice("Show Inventory", () -> {inventoryEvent();}));
+		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 		addNPC(new NPC());
 	}
 	
 	public Event(String description) {
 		this.description = "\033[0;34m" + description + "\033[0m";
-		eventChoices.add(new Choice("Show Inventory", () -> {inventoryEvent();}));
+		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 		//	Special Constructor for events without default choice like Display Inventory
 	public Event(String description, boolean containsDefaultChoices) {
 		this.description = "\033[0;34m" + description + "\033[0m";
 		this.isDefault = containsDefaultChoices;
-	}
-	
-	public Event(String description, Item triggerItem) {
-		this.description = description;
 	}
 
 }
