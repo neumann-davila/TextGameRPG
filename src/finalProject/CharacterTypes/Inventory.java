@@ -67,6 +67,9 @@ public class Inventory {
     public void display() {
         displayInventory.addChoice(exit);
 
+        System.out.println( "\033[0;32mEquipped Weapon \033[0;93m\n" + equippedWeapon +
+                            "");
+
         displayInventory.displayEvent();
 
         displayInventory.removeChoice(exit);

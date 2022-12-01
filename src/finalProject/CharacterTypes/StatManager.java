@@ -48,7 +48,7 @@ public class StatManager {
 	private int totalStatPoints;
 	
 	public String toString() {
-		return "" + strength + "\n" + dexterity + "\n" + charisma + "\n";
+		return "\033[0;92m		" + strength + "\n		" + dexterity + "\n		" + charisma + "\n";
 	}
 	
 	public void clearStats() {

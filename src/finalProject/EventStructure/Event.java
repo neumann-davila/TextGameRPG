@@ -28,7 +28,7 @@ import finalProject.CharacterTypes.Character;
 public class Event {
 	private Scanner input = new Scanner(System.in);
 	
-	private String description;
+	private String description = "\033[0;96m";;
 	private ArrayList<Choice> eventChoices = new ArrayList<Choice>();
 	private ArrayList<Character> eventNPC = new ArrayList<Character>();
 	private boolean isDefault = true;
@@ -52,7 +52,7 @@ public class Event {
 				System.out.println("");
 
 				for (int i = 0; i < eventChoices.size(); i++) {
-					System.out.println(i + ": " + eventChoices.get(i));
+					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i));
 				}
 				try {
 					int tempInt = Integer.parseInt(input.nextLine().strip());
@@ -68,7 +68,7 @@ public class Event {
 				System.out.println(description);
 
 				for (int i = 1; i < eventChoices.size() + 1; i++) {
-					System.out.println(i + ": " + eventChoices.get(i - 1));
+					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i - 1));
 				}
 
 				getDecision();
@@ -192,18 +192,18 @@ public class Event {
 									//	---Constructors---	\\
 	
 	public Event() {
-		this.description = "\033[0;34mtest \033[0m";
+		this.description += "test \033[0m";
 		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 		addNPC(new NPC());
 	}
 	
 	public Event(String description) {
-		this.description = "\033[0;34m" + description + "\033[0m";
+		this.description += description + "\033[0m";
 		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 		//	Special Constructor for events without default choice like Display Inventory
 	public Event(String description, boolean containsDefaultChoices) {
-		this.description = "\033[0;34m" + description + "\033[0m";
+		this.description += description + "\033[0m";
 		this.isDefault = containsDefaultChoices;
 	}
 

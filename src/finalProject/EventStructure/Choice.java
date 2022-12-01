@@ -18,7 +18,7 @@ public class Choice {
 		//	runs whatever effect is assigned to the react() method
 	public void choiceRun() {
 		if(outcomeDescription != null) {
-			System.out.println(outcomeDescription);
+			System.out.println("\033[93m" + outcomeDescription);
 		}
 		else {
 			System.out.println("");
