@@ -127,9 +127,9 @@ public class TextGame {
 		forest.addEvent(enterCampsite);
 			//	Event Index 1
 		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.addItem(oldAxe);forest.nextEvent(2);}));
-		getWeapon.addChoice(new Choice("Sword", () -> {player.addItem(oldSword);forest.nextEvent(2);}));
-		getWeapon.addChoice(new Choice("A bow with 10 arrows", () -> {player.addItem(oldBow);player.addItem(arrows);forest.nextEvent(2);}));
+		getWeapon.addChoice(new Choice("Axe", () -> {player.addItem(oldAxe);player.getInventory().setEquippedWeapon(oldAxe);forest.nextEvent(2);}));
+		getWeapon.addChoice(new Choice("Sword", () -> {player.addItem(oldSword);player.getInventory().setEquippedWeapon(oldSword);forest.nextEvent(2);}));
+		getWeapon.addChoice(new Choice("A bow with 10 arrows", () -> {player.addItem(oldBow);player.getInventory().setEquippedWeapon(oldBow);player.addItem(arrows);forest.nextEvent(2);}));
 		
 		forest.addEvent(getWeapon);
 			//	Event Index 2
@@ -160,13 +160,13 @@ public class TextGame {
 	public static void run() {
 		player.setMaxHealth(20);
 		player.getStats().resetGame();
-		
+
 		Event gameOver = new Event("You Died", false);
 		gameOver.addChoice(new Choice("Restart Game", () -> {TextGame.run();}));
 		gameOver.addChoice(new Choice("Quit", () -> {}));
 		player.setDeathEvent(gameOver);
-		
-		
+
+
 		createPrisonWall();
 	}
 	

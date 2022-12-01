@@ -15,50 +15,46 @@ import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
 
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Inventory {
     private Scanner input = new Scanner(System.in);
 
-    private int lastEmptyCell;
-    private Item[] inventory = new Item[8];
+    private ArrayList<Item> inventory = new ArrayList<Item>();
     private Event displayInventory = new Event("What would you like to do in your inventory", false);
     Choice exit = new Choice("Exit", () -> {});
 
-    //TODO create item interaction feature to eliminate unnecessary ArrayLists
+    //TODO equipped Items are not in inventory & unequip prompt &
 
                         //  ---Equippable Items---  \\
-    private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
-    private Weapon equippedWeapon = null;
+    private Weapon equippedWeapon = new Weapon();
 
                         //  ---Money---  \\
     private int money = 0;
 
     public String toString() {
         String summary = "";
-        for (int i = 0; i < lastEmptyCell; i++) {
-            summary += (1 + i) + ": " + this.inventory[i] + "\n";
+        for (int i = 0; i < inventory.size(); i++) {
+            summary += (1 + i) + ": " + this.inventory.get(i) + "\n";
         }
         return summary;
     }
 
-    public void interact(int index) {
-        Item tempItem = inventory[index];
-        System.out.println(index);
-        Event interact = new Event("What would you like to do with " + tempItem, false);
+    public void interact(Item newItem) {
+        Event interact = new Event("What would you like to do with " + newItem, false);
                 //  Creates discard method
-        Event confirmDis = new Event("Are you sure you want to discard: " + tempItem, false);
-        confirmDis.addChoice(new Choice("Yes", () -> {removeItem(index);}));
+        Event confirmDis = new Event("Are you sure you want to discard: " + newItem, false);
+        confirmDis.addChoice(new Choice("Yes", () -> {inventory.remove(newItem);}));
         confirmDis.addChoice(new Choice("No", () -> {}));
 
-        interact.addChoice(new Choice("Discard",() -> {confirmDis.displayEvent();interact(index);}));
+        interact.addChoice(new Choice("Discard",() -> {confirmDis.displayEvent();interact(newItem);}));
 
-        System.out.println(tempItem);
-        if(tempItem instanceof Weapon) {
-            interact.addChoice(new Choice("Equip " + tempItem, () -> {setEquippedWeapon((Weapon) tempItem);}));
+        System.out.println(newItem);
+        if(newItem instanceof Weapon) {
+            interact.addChoice(new Choice("Equip", () -> {setEquippedWeapon((Weapon) newItem);}));
         }
-        else if (tempItem instanceof Armor) {
+        else if (newItem instanceof Armor) {
 
         }
 
@@ -75,72 +71,38 @@ public class Inventory {
 
         displayInventory.removeChoice(exit);
     }
-    public Item[] getInventory() {
-        return this.inventory;
-    }
     public Item getItem(int index) {
-        return inventory[index];
+        return inventory.get(index);
     }
 
     public void removeItem(int index) {
-        if(inventory[index] instanceof Weapon) {
-            if(this.equippedWeapon == inventory[index]) {
-                weapons.remove(inventory[index]);
-                inventory[index - 1] = null;
-            }
-            else {
-                weapons.remove(inventory[index]);
-                inventory[index] = null;
-            }
-        }
-        else {
-            inventory[index] = null;
-        }
+        inventory.remove(index);
+    }
 
-        for(int i = 0; i < lastEmptyCell; i++) {
-            if (inventory[i] == null) {
-                inventory[i] = inventory[i + 1];
-                inventory[i + 1] = null;
+    public void remove(Item item) {
+        for(int i = 0; i < inventory.size(); i++) {
+            if(item.getName().equals(inventory.get(i).getName())) {
+                inventory.remove(i);
+                break;
             }
         }
-        lastEmptyCell--;
     }
 
     public void addItem(Item newItem) {
-
-        if(!newItem.isStackable()) {
-            if(lastEmptyCell < 8) {
-                System.out.println("" + newItem);
-                this.inventory[this.lastEmptyCell] = newItem;
-                int tempInt = lastEmptyCell;
-                displayInventory.addChoice(new Choice("" + newItem,() -> {interact(tempInt);}));
-                this.lastEmptyCell += 1;
-
-
-                if(newItem instanceof Weapon) {
-                    weapons.add((Weapon) newItem);
-                    if(weapons.size() == 1) {
-                        equippedWeapon = (Weapon) newItem;
+        if(inventory.size() < 8) {
+            if(newItem.isStackable()) {
+                for (int i = 0; i < inventory.size(); i++) {
+                    if (newItem.getName().equals(inventory.get(i).getName())) {
+                        inventory.get(i).adjustAmount(newItem.getAmount());
+                        break;
                     }
                 }
             }
-            else {
-                System.out.println("You have no space in your inventory!");
-            }
+                    inventory.add(newItem);
+                    displayInventory.addChoice(new Choice("" + newItem,() -> {interact(newItem);}));
         }
         else {
-            boolean found = false;
-            for(int i = 0; i < lastEmptyCell; i++) {
-                if(newItem.getName().equals(inventory[i].getName())) {
-                    inventory[i].adjustAmount(newItem.getAmount());
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) {
-                this.inventory[this.lastEmptyCell] = newItem;
-                this.lastEmptyCell += 1;
-            }
+            System.out.println("No space in Inventory");
         }
     }
 
@@ -150,12 +112,10 @@ public class Inventory {
         return this.equippedWeapon;
     }
 
-    public ArrayList<Weapon> getWeapons() {
-        return this.weapons;
-    }
 
     public void setEquippedWeapon(Weapon weapon) {
         equippedWeapon = weapon;
+        remove(weapon);
     }
 
     public void purchaseItem(Item item) {

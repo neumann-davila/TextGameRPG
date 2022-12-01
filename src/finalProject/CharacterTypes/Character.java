@@ -22,13 +22,12 @@ public class Character {
 	Scanner input = new Scanner(System.in);
 	Random rand = new Random();
 
-	//TODO add defense STAT?
 	protected String name;
 	protected int maxHealth = 0;
 	protected int tempHealth;
-		//	Stat Manager
+
+	//TODO add defense STAT?
 	protected StatManager stats = new StatManager();
-		//	inventory variables
 	Inventory inventory = new Inventory();
 		//	death events
 	protected Event death;
@@ -66,11 +65,7 @@ public class Character {
 		this.maxHealth = health;
 		this.tempHealth = maxHealth;
 	}
-	
-	public void setHealth(int health) {
-		this.tempHealth = health;
-	}
-	
+
 	public void adjustHealth(int userIn) {
 		this.tempHealth += userIn;
 	}
@@ -79,7 +74,7 @@ public class Character {
 		return this.tempHealth;
 	}
 	
-	public void attack(Character enemy) {
+	public void attack(NPC enemy) {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
 			int extra = rand.nextInt(stats.getStrength().getStat());
@@ -87,11 +82,17 @@ public class Character {
 			enemy.adjustHealth(-(damage + extra));
 			
 			System.out.println("You do " + damage + " + " + extra +  " damage to the " + enemy + ".");
-			
+
 		}
 		else {
 			System.out.println("You miss!");
-		}	
+		}
+	}
+
+	public void combat(NPC enemy) {
+		Event combat = new Event("Health: " + healthBar());
+
+		combat.addChoice(new Choice("Attack: " + getEquippedWeapon(), () -> {attack(enemy); }));
 	}
 	
 	public void setDeathEvent(Event event) {
@@ -117,54 +118,15 @@ public class Character {
 		return inventory.getEquippedWeapon();
 	}
 	public void removeItem(int index) {
-		if(inventory.getItem(index - 1) instanceof Weapon) {
 			inventory.removeItem(index -1);
-			equipWeapon();
-		}
-		else {
-			inventory.removeItem(index -1);
-		}
 	}
 
-	public void equipWeapon() {
-		ArrayList<Weapon> weapons = inventory.getWeapons();
 
-		if(weapons.size() == 0) {
-			inventory.setEquippedWeapon(new Weapon());
-		}
-		else {
-			for(int i = 0; i < weapons.size(); i++) {
-				System.out.println((i + 1) + ": " + weapons.get(i));
-			}
-			System.out.println("Choose the weapon you would like to equip:");
-			inventory.setEquippedWeapon(weapons.get(input.nextInt() - 1));
-		}
-	}
 
 	public void addItem(Item item) {
 		inventory.addItem(item);
 	}
 
-	public void discardItem() {
-		System.out.println("What Item would you like to discard?\n9: Exit");
-		int discardIndex = input.nextInt();
-
-		if(discardIndex < 9) {
-			Event confirmDiscard = new Event("Are you sure you want to discard:\n" + inventory.getItem(discardIndex - 1), false);
-			confirmDiscard.addChoice(new Choice("Yes", () -> {removeItem(discardIndex);}));
-			confirmDiscard.addChoice(new Choice("No", () -> {}));
-			confirmDiscard.displayEvent();
-
-		}
-		else if(discardIndex == 9) {
-
-		}
-		else {
-			System.out.println("Invalid Input");
-			discardItem();
-		}
-	}
-	
 	public void giveItem(NPC recipiant) {
 		System.out.println(inventory + "What Item would you like to give to " + recipiant + "?\n9: Exit");
 		int discardIndex = input.nextInt();
@@ -190,7 +152,7 @@ public class Character {
 	public void pickPocket(Character recipiant) {
 			//	finalize stat system idea
 			//	create an if statement that allows for a chance of failure
-		if(recipiant.getStats().rollDexterity(this.stats.getDexterity()) == true) {
+		if(recipiant.getStats().rollDexterity(this.stats.getDexterity())) {
 			System.out.println(inventory + "What would you like to take?\n9: Exit");
 			int stealIndex = input.nextInt();
 			

@@ -78,7 +78,7 @@ public class NPC extends Character {
 		}
 	}
 	
-	@Override public void attack(Character enemy) {
+	public void attack(Character enemy) {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
 			int extra = rand.nextInt(getStats().getStrength().getStat());
@@ -89,19 +89,6 @@ public class NPC extends Character {
 		}
 		else {
 				System.out.println(getName() + " missed!");
-		}
-	}
-		
-	@Override public void equipWeapon() {
-		ArrayList<Weapon> weapons = inventory.getWeapons();
-		if(weapons.size() == 0) {
-			inventory.setEquippedWeapon(new Weapon());
-		}
-		else if (weapons.size() == 1){
-			inventory.setEquippedWeapon(weapons.get(0));
-		}
-		else {
-			//	cycling through weapons or attack type
 		}
 	}
 	

@@ -41,68 +41,39 @@ public class Event {
 									//	---Display Methods---	\\
 	
 	public void displayEvent() {
-			//	automatically runs if there is only one choice in the Event
-		if(eventChoices.size() == 1) {
+		//	automatically runs if there is only one choice in the Event
+		if (eventChoices.size() == 1) {
 			System.out.println(description);
 			eventChoices.get(0).choiceRun();
-		}
-		else {
-				//	If the event has default choices then it will run starting at 0
-			if(isDefault) {
+		} else {
+			//	If the event has default choices then it will run starting at 0
+			if (isDefault) {
 				System.out.printf(description);
 				System.out.println("");
-				
-				for (int i = 0; i < eventChoices.size();i++ ) {
+
+				for (int i = 0; i < eventChoices.size(); i++) {
 					System.out.println(i + ": " + eventChoices.get(i));
 				}
 				try {
 					int tempInt = Integer.parseInt(input.nextLine().strip());
 					eventChoices.get(tempInt).choiceRun();
-					}
-					catch(Exception e){
-						System.out.println("Invalid Input: Event");
-						displayEvent();
-					}
+				} catch (Exception e) {
+					System.out.println("Invalid Input: Event");
+					displayEvent();
+				}
 			}
-				//	Choices will be run stating at 1 for ease of use
-				//	only if default choices are not being used
+			//	Choices will be run stating at 1 for ease of use
+			//	only if default choices are not being used
 			else {
 				System.out.println(description);
-				
-				for(int i = 1; i < eventChoices.size() + 1; i++) {
+
+				for (int i = 1; i < eventChoices.size() + 1; i++) {
 					System.out.println(i + ": " + eventChoices.get(i - 1));
 				}
-				
+
 				getDecision();
 			}
 		}
-	}
-	
-		//	Inventory event built into every event object if the method is called
-	public void inventoryEvent() {
-		ArrayList<Choice> inventoryChoices = new ArrayList<Choice>();
-		Item[] inventory = TextGame.player.getInventory().getInventory();
-
-		for(int i = 0; i < inventory.length;i++) {
-			inventoryChoices.add(new Choice("" + inventory[i], () -> {}));
-		}
-
-
-		System.out.println(TextGame.player.getInventory() + "What item would you like to interact with?");
-		
-		for(int i = 1; i < inventoryChoices.size() + 1;i++ ) {
-			System.out.println(i + ": " + inventoryChoices.get(i - 1));
-		}
-		try {
-			int tempInt = Integer.parseInt(input.nextLine().strip());
-			inventoryChoices.get(tempInt - 1).choiceRun();
-			}
-			catch(Exception e){
-				System.out.println("Invalid input: Inventory");
-				inventoryEvent();
-			}
-		
-		displayEvent();
 	}
 	
 								//	---NPC Methods---	\\
@@ -162,8 +133,8 @@ public class Event {
 	
 	public void combatEvent(NPC enemy) {
 		ArrayList<Choice> combatChoices = new ArrayList<Choice>();
+		combatChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();combatEvent(enemy);}));
 		combatChoices.add(new Choice("Attack: " + TextGame.player.getEquippedWeapon(), () -> {TextGame.player.attack(enemy);enemy.attack(TextGame.player);}));
-		combatChoices.add(new Choice("Switch Weapons", () -> {TextGame.player.equipWeapon();combatEvent(enemy);}));
 		combatChoices.add(new Choice("Use your surroundings", () -> {}));
 		combatChoices.add(new Choice("Run", () -> {if(TextGame.player.getStats().rollDexterity(enemy.getStats().getDexterity())) {System.out.println("You ran");displayEvent();} else {System.out.println("Failed"); enemy.attack(TextGame.player);}}));
 
@@ -171,18 +142,17 @@ public class Event {
 		while(TextGame.player.getHealth() > 0 && enemy.getHealth() > 0) {
 			System.out.println("\nHealth: " + TextGame.player.healthBar() + "\n" + enemy + ": " + enemy.getHealth());
 					
-			for (int i = 1; i < combatChoices.size() + 1;i++ ) {
-				System.out.println(i + ": " + combatChoices.get(i - 1));
+			for (int i = 0; i < combatChoices.size();i++ ) {
+				System.out.println(i + ": " + combatChoices.get(i));
 			}
 			
 			try {
 				int tempInt = Integer.parseInt(input.nextLine().strip());
-				combatChoices.get(tempInt - 1).choiceRun();
+				combatChoices.get(tempInt).choiceRun();
 			}
 			catch(Exception e){
 					System.out.println("Invalid input: Combat");
-					removeNPC(enemy);
-			}	
+			}
 		}
 		
 		if(TextGame.player.getHealth() <= 0) {
