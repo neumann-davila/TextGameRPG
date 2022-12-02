@@ -1,4 +1,3 @@
-package finalProject.EventStructure;
 /*
  * Author: Neumann Davila
  * Date:   Oct 7, 2022
@@ -11,11 +10,15 @@ package finalProject.EventStructure;
  *
  */
 
+package finalProject.EventStructure;
 public class Choice {
 	private String choiceDescription;
 	private String outcomeDescription;
 	private Consequence outcome;
 		//	runs whatever effect is assigned to the react() method
+	public String getDescription() {
+		return this.choiceDescription;
+	}
 	public void choiceRun() {
 		if(outcomeDescription != null) {
 			System.out.println("\033[93m" + outcomeDescription);

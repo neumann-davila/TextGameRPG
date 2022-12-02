@@ -24,15 +24,11 @@ public class TextGame {
 		//Basic Items: Item("Name" , price, (optional) amount)
 	static Item stick = new Item("Stick", 0);
 
-		//	Declared Ammunition - Ammunition("Name" , amount)
-	static Ammunition arrows = new Ammunition("Arrows", 10);
-	
 		//	Declared Items - Weapons("Name" , minDamage, maxDamage, hit%, price)
 	static Weapon cane = new Weapon("Cane", 1, 3, 35, 1);
 	static Weapon oldSword = new Weapon("Old Sword", 5, 7 , 63, 1);
 	static Weapon oldAxe = new Weapon("Old Axe", 8, 10, 45, 1);
-	static Weapon oldBow = new Weapon("Old Bow", 6, 9, 55, arrows, 1);
-	
+
 		//	Main Player declaration
 	public static Character player =  new Character();
 		
@@ -122,15 +118,14 @@ public class TextGame {
 		Event enterCampsite = new Event("As you get deeper into the forest you find a campsite that was abandoned long ago.\n" +
 										"There are an assortment of items left behind... hopefully one wants them back.\n" +
 										"You find a journal and decide to write your name", false);
-		enterCampsite.addChoice(new Choice("Write your name in your journal", "Type your Name",() -> {player.setName(input.nextLine());forest.nextEvent(1);}));
+		enterCampsite.addChoice(new Choice("Write your name in your journal", "Type your Name",() -> {player.setName(input.nextLine());forestIndex = 1;forest.nextEvent(forestIndex);}));
 		
 		forest.addEvent(enterCampsite);
 			//	Event Index 1
 		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.addItem(oldAxe);player.getInventory().setEquippedWeapon(oldAxe);forest.nextEvent(2);}));
-		getWeapon.addChoice(new Choice("Sword", () -> {player.addItem(oldSword);player.getInventory().setEquippedWeapon(oldSword);forest.nextEvent(2);}));
-		getWeapon.addChoice(new Choice("A bow with 10 arrows", () -> {player.addItem(oldBow);player.getInventory().setEquippedWeapon(oldBow);player.addItem(arrows);forest.nextEvent(2);}));
-		
+		getWeapon.addChoice(new Choice("Axe", () -> {player.addItem(oldAxe);player.getInventory().setEquippedWeapon(oldAxe);forestIndex = 2;forest.nextEvent(forestIndex);}));
+		getWeapon.addChoice(new Choice("Sword", () -> {player.addItem(oldSword);player.getInventory().setEquippedWeapon(oldSword);forestIndex = 2; forest.nextEvent(forestIndex);}));
+
 		forest.addEvent(getWeapon);
 			//	Event Index 2
 		Event test = new Event("test");
@@ -148,10 +143,12 @@ public class TextGame {
 
 	public static Shop createTavern() {
 		Shop tavern = new Shop("Tavern");
+		Choice[] nearbyLocations = {goTo("Forest", () -> {createForest();})};
 
 		tavern.addItem(stick);
 
-		tavern.enterShop();
+		tavern.setNearbyLocations(nearbyLocations);
+		tavern.nextEvent(tavernIndex);
 
 		return tavern;
 	}

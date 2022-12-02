@@ -16,20 +16,15 @@ public class Weapon extends Item {
 	private int damageMin;
 	private int damageMax;
 	private int hitChance;
-	private boolean isRanged = false;
-	private Ammunition ammo;
+
+	//TODO ranged
 	
 	@Override public String toString() {
 		String summary = "";
 		
-		summary += ":\n";
+		summary += "\n";
 		summary += "     Damage: " + damageMin + " - " + damageMax + "\n";
 		summary += "     Hit Chance: " + hitChance + "%\n";
-		
-		
-		if (isRanged == true) {
-			summary += "     Ammo: " + ammo.getName() + "\n";
-		}
 		
 		return (super.toString() + summary);
 	}
@@ -39,19 +34,7 @@ public class Weapon extends Item {
 		int hitPerc = rand.nextInt(99);
 		
 		if(hitPerc < hitChance - 1){
-			if (isRanged == false) {
 				return rand.nextInt(damageMax - damageMin) + damageMin;
-			}
-			else {
-				//TODO fix ranged attacks
-//				if (ammo == true) {
-//					return rand.nextInt(damageMax - damageMin) + damageMin;
-//				}
-//				else {
-//					System.out.println("You do not have any ammo for that weapon.");
-					return 0;
-//				}
-			}
 		}
 		else {
 			return 0;
@@ -75,18 +58,6 @@ public class Weapon extends Item {
 		this.hitChance = hitChance;
 		this.stackable = false;
 	}
-
-	public Weapon(String name, int damageMin, int damageMax, int hitChance, Ammunition ammo, int price) {
-		this.name = name;
-		this.price = price;		
-		this.damageMin = damageMin;
-		this.damageMax = damageMax;
-		this.hitChance = hitChance;
-		this.isRanged = true;
-		this.ammo = ammo;
-		this.stackable = false;
-	}
-	
 	
 }
 

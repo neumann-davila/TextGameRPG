@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 import finalProject.CharacterTypes.NPC;
 import finalProject.EventStructure.*;
-import finalProject.TextGame;
 
 public class Location {
 	protected String name;

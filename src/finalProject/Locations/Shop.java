@@ -36,7 +36,25 @@ public class Shop extends Location{
 		
 		shop.displayEvent();
 	}
-	
+
+	@Override
+	public void setNearbyLocations(Choice[] nearbyLocations) {
+		for(Choice nearbyLocation : nearbyLocations) {
+			shop.addChoice(nearbyLocation);
+		}
+		super.setNearbyLocations(nearbyLocations);
+	}
+
+	@Override
+	public void nextEvent(int eventNum) {
+		if(eventNum == 0) {
+			enterShop();
+		}
+		else {
+			super.nextEvent(eventNum - 1);
+		}
+	}
+
 	public void enterShop() {
 		shop.displayEvent();
 	}

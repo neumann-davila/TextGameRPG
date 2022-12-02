@@ -22,6 +22,13 @@ public class Armor extends Item{
      *
      */
 
+    @Override public String toString(){
+        String summary = "";
+        summary +=  "\n" +
+                    "     Defense: " + healthInc;
+
+        return super.toString() + summary;
+    }
     public int getArmorType() {
         return armorType;
     }

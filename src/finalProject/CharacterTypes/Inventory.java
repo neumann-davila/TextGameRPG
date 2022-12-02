@@ -17,18 +17,21 @@ import finalProject.Items.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+    //TODO Stack duplication
 public class Inventory {
     private Scanner input = new Scanner(System.in);
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private Event displayInventory = new Event("What would you like to do in your inventory", false);
-    Choice exit = new Choice("Exit", () -> {});
+    Choice exit = new Choice("Exit","Exiting Inventory",  () -> {});
 
-    //TODO equipped Items are not in inventory & unequip prompt &
 
                         //  ---Equippable Items---  \\
     private Weapon equippedWeapon = new Weapon();
+    private Armor equippedHelm;
+    private Armor equippedChest;
+    private Armor equippedLeg;
+    private Armor equippedBoot;
 
                         //  ---Money---  \\
     private int money = 0;
@@ -55,7 +58,18 @@ public class Inventory {
             interact.addChoice(new Choice("Equip", () -> {setEquippedWeapon((Weapon) newItem);}));
         }
         else if (newItem instanceof Armor) {
-
+            if(((Armor) newItem).getArmorType() == 1) {
+                interact.addChoice(new Choice("Equip", () -> {equippedHelm = (Armor)newItem;remove(newItem);}));
+            }
+            else if(((Armor) newItem).getArmorType() == 2) {
+                interact.addChoice(new Choice("Equip", () -> {equippedChest = (Armor)newItem;remove(newItem);}));
+            }
+            else if(((Armor) newItem).getArmorType() == 3) {
+                interact.addChoice(new Choice("Equip", () -> {equippedLeg = (Armor)newItem;remove(newItem);}));
+            }
+            else if(((Armor) newItem).getArmorType() == 4) {
+                interact.addChoice(new Choice("Equip", () -> {equippedBoot = (Armor)newItem;remove(newItem);}));
+            }
         }
 
         interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);display();}));
@@ -84,8 +98,14 @@ public class Inventory {
 
     public void remove(Item item) {
         for(int i = 0; i < inventory.size(); i++) {
-            if(item.getName().equals(inventory.get(i).getName())) {
+            if(item.equals(inventory.get(i))) {
+                for(int j = 0; j < displayInventory.getChoices().size(); j++) {
+                    if(("" + item).equals(displayInventory.getChoices().get(j).getDescription())) {
+                        displayInventory.getChoices().remove(j);
+                    }
+                }
                 inventory.remove(i);
+
                 break;
             }
         }
@@ -93,11 +113,21 @@ public class Inventory {
 
     public void addItem(Item newItem) {
         if(inventory.size() < 8) {
+                //  checks if the item is stackable
             if(newItem.isStackable()) {
+                    // cycles through the inventory to find if the item it already in th
                 for (int i = 0; i < inventory.size(); i++) {
-                    if (newItem.getName().equals(inventory.get(i).getName())) {
+                        //  compares the names of each Item
+                    if (("" + newItem).equals("" + inventory.get(i))) {
+                            // Item choice is removed
+                        for(int j = 0; j < displayInventory.getChoices().size(); j++) {
+                            if(("" + newItem).equals(displayInventory.getChoices().get(j).getDescription())) {
+                                displayInventory.getChoices().remove(j);
+                            }
+                        }
+                            //   item amount is adjusted
                         inventory.get(i).adjustAmount(newItem.getAmount());
-                        break;
+
                     }
                 }
             }
@@ -109,7 +139,24 @@ public class Inventory {
         }
     }
 
+    public int getArmorIncrease() {
+        int totalIncrease = 0;
 
+        if(equippedHelm != null) {
+            totalIncrease += equippedHelm.getInc();
+        }
+        else if(equippedChest != null) {
+            totalIncrease += equippedChest.getInc();
+        }
+        else if(equippedLeg != null) {
+            totalIncrease += equippedLeg.getInc();
+        }
+        else if(equippedBoot != null) {
+            totalIncrease += equippedBoot.getInc();
+        }
+
+        return totalIncrease;
+    }
 
     public Weapon getEquippedWeapon() {
         return this.equippedWeapon;

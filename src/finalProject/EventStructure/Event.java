@@ -177,6 +177,8 @@ public class Event {
 		this.eventChoices.remove(choice);
 	}
 
+	public ArrayList<Choice> getChoices () {return this.eventChoices;}
+
 		//	Collects and runs the decision for the event 
 	public void getDecision() {
 		try {
