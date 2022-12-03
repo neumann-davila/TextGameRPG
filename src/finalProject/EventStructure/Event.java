@@ -110,7 +110,18 @@ public class Event {
 		
 		NPCChoices.add(new Choice("Talk to " + npc, () -> {System.out.println(npc.getDialogue(friendStat));}));
 		NPCChoices.add(new Choice("Give something to " + npc, () -> {TextGame.player.giveItem(npc);}));
-		NPCChoices.add(new Choice("Attack " + npc, () -> {combatEvent(npc);TextGame.player.getStats().adjustFriendStat(friendStat, -50);}));
+		NPCChoices.add(new Choice("Attack " + npc, () -> {
+			TextGame.player.combat(npc);
+			if(TextGame.player.getHealth() < 0) {
+				TextGame.player.displayDeathEvent();
+			}
+			else {
+				removeNPC(npc);
+				System.out.println("\nYou killed the " + npc);
+				npc.displayDeathEvent();
+			}
+
+		}));
 		NPCChoices.add(new Choice("Pickpocket " + npc, () -> {npc.pickPocket(TextGame.player);TextGame.player.getStats().adjustFriendStat(friendStat, -20);}));
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
@@ -131,41 +142,41 @@ public class Event {
 	
 		//	Method that runs combat Events with NPC's
 	
-	public void combatEvent(NPC enemy) {
-		ArrayList<Choice> combatChoices = new ArrayList<Choice>();
-		combatChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();combatEvent(enemy);}));
-		combatChoices.add(new Choice("Attack: " + TextGame.player.getEquippedWeapon(), () -> {TextGame.player.attack(enemy);enemy.attack(TextGame.player);}));
-		combatChoices.add(new Choice("Use your surroundings", () -> {}));
-		combatChoices.add(new Choice("Run", () -> {if(TextGame.player.getStats().rollDexterity(enemy.getStats().getDexterity())) {System.out.println("You ran");displayEvent();} else {System.out.println("Failed"); enemy.attack(TextGame.player);}}));
-
-			//while both the enemy and the player have over 0 health
-		while(TextGame.player.getHealth() > 0 && enemy.getHealth() > 0) {
-			System.out.println("\nHealth: " + TextGame.player.healthBar() + "\n" + enemy + ": " + enemy.getHealth());
-					
-			for (int i = 0; i < combatChoices.size();i++ ) {
-				System.out.println(i + ": " + combatChoices.get(i));
-			}
-			
-			try {
-				int tempInt = Integer.parseInt(input.nextLine().strip());
-				combatChoices.get(tempInt).choiceRun();
-			}
-			catch(Exception e){
-					System.out.println("Invalid input: Combat");
-			}
-		}
-		
-		if(TextGame.player.getHealth() <= 0) {
-			TextGame.player.displayDeathEvent();
-		}
-		else {
-			System.out.println("\nYou killed the " + enemy);
-			enemy.displayDeathEvent();
-			removeNPC(enemy);
-		}
-		
-	}
-	
+//	public void combatEvent(NPC enemy) {
+//		ArrayList<Choice> combatChoices = new ArrayList<Choice>();
+//		combatChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();combatEvent(enemy);}));
+//		combatChoices.add(new Choice("Attack: " + TextGame.player.getEquippedWeapon(), () -> {TextGame.player.attack(enemy);enemy.attack(TextGame.player);}));
+//		combatChoices.add(new Choice("Use your surroundings", () -> {}));
+//		combatChoices.add(new Choice("Run", () -> {if(TextGame.player.getStats().rollDexterity(enemy.getStats().getDexterity())) {System.out.println("You ran");displayEvent();} else {System.out.println("Failed"); enemy.attack(TextGame.player);}}));
+//
+//			//while both the enemy and the player have over 0 health
+//		while(TextGame.player.getHealth() > 0 && enemy.getHealth() > 0) {
+//			System.out.println("\nHealth: " + TextGame.player.healthBar() + "\n" + enemy + ": " + enemy.getHealth());
+//
+//			for (int i = 0; i < combatChoices.size();i++ ) {
+//				System.out.println(i + ": " + combatChoices.get(i));
+//			}
+//
+//			try {
+//				int tempInt = Integer.parseInt(input.nextLine().strip());
+//				combatChoices.get(tempInt).choiceRun();
+//			}
+//			catch(Exception e){
+//					System.out.println("Invalid input: Combat");
+//			}
+//		}
+//
+//		if(TextGame.player.getHealth() <= 0) {
+//			TextGame.player.displayDeathEvent();
+//		}
+//		else {
+//			System.out.println("\nYou killed the " + enemy);
+//			enemy.displayDeathEvent();
+//			removeNPC(enemy);
+//		}
+//
+//	}
+//
 	
 									//	---Choice Methods---  \\
 

@@ -23,7 +23,6 @@ public class NPC extends Character {
 	private ArrayList<String> positiveReacts = new ArrayList<String>();
 	private ArrayList<String> neutralReacts = new ArrayList<String>();
 	private ArrayList<String> negativeReacts = new ArrayList<String>();
-	//TODO side quests?
 	private ArrayList<Event> sideQuests = new ArrayList<Event>();
 	private int interactions = 0;
 	private int giftsReceived = 0;
@@ -78,23 +77,21 @@ public class NPC extends Character {
 		}
 	}
 	
-	public void attack(Character enemy) {
+	public int attack() {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
-			int extra = rand.nextInt(getStats().getStrength().getStat());
-			
-			enemy.adjustHealth(-(damage + extra));
-			
-			System.out.println("The " + getName() + " did " + damage + " damage to you.");
+			int extra = rand.nextInt(stats.getStrength().getStat());
+			System.out.println(name + " did " + damage + " + " + extra + " damage");
+			return -(damage + extra);
 		}
 		else {
-				System.out.println(getName() + " missed!");
+			System.out.println(name + " missed");
+			return 0;
 		}
 	}
 	
 	@Override public void displayDeathEvent() {
 		TextGame.player.getStats().addXp(getStats().getXp().getStat());
-		System.out.println("test: Death");
 		getDeathEvent().displayEvent();
 	}
 	

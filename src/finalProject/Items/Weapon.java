@@ -24,7 +24,7 @@ public class Weapon extends Item {
 		
 		summary += "\n";
 		summary += "     Damage: " + damageMin + " - " + damageMax + "\n";
-		summary += "     Hit Chance: " + hitChance + "%\n";
+		summary += "     Hit Chance: " + hitChance + "%";
 		
 		return (super.toString() + summary);
 	}

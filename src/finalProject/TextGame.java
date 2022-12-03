@@ -20,21 +20,34 @@ import finalProject.Locations.*;
 
 public class TextGame {
 	static Scanner input = new Scanner(System.in);
-
-		//Basic Items: Item("Name" , price, (optional) amount)
-	static Item stick = new Item("Stick", 0);
-
-		//	Declared Items - Weapons("Name" , minDamage, maxDamage, hit%, price)
-	static Weapon cane = new Weapon("Cane", 1, 3, 35, 1);
-	static Weapon oldSword = new Weapon("Old Sword", 5, 7 , 63, 1);
-	static Weapon oldAxe = new Weapon("Old Axe", 8, 10, 45, 1);
-
 		//	Main Player declaration
 	public static Character player =  new Character();
-		
-								//	---Character Creation Methods---\\
+
+
+		/*
+		 * 						---Needed Constructors---
+		 *
+		 *
+		 * Item name = new Item("Name", int price, (optional) int amount);
+		 * 		- Creates Basic Items with no real immediately usable function
+		 *
+		 * Weapon name = new Weapon("Name", int minDamage, int maxDamage, int hit%, int price);
+		 *
+		 * Armor name = new Armor("Name", int armorType, int defense, int price);
+		 * 		- Armor Types
+		 * 			- 1 = Helmet
+		 * 			- 2 = Chest plate
+		 * 			- 3 = Leggings
+		 * 			- 4 = Boots
+		 */
+
+
+
 	
-		/* 
+		/*
+		 *						---Character Creation Methods---
+		 *
+		 *
 		 * NPC = Character("Name", health, XP gained)
 		 * 		- Dialogue must be added within functions
 		 * 				- AddDialogue("STRING", int)
@@ -48,7 +61,7 @@ public class TextGame {
 	public static NPC createOldMan() {
 		NPC oldMan = new NPC("Old man", 6, 20);
 		
-		oldMan.addItem(cane);
+		oldMan.addItem(new Weapon("Cane", 1, 3, 35, 1));
 		
 		player.getStats().getFriendStat(oldMan).setStat(80);
 		
@@ -67,10 +80,12 @@ public class TextGame {
 		return oldMan;
 	}
 	
-	
-								//	---Location Creation Methods---	\\
+
 	
 		/*
+		 *						---Location Creation Methods---
+		 *
+		 *
 		 * These Methods are used to fill the locations with events and NPC's
 		 * otherwise the Location will not be interactive
 		 *
@@ -123,8 +138,8 @@ public class TextGame {
 		forest.addEvent(enterCampsite);
 			//	Event Index 1
 		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.addItem(oldAxe);player.getInventory().setEquippedWeapon(oldAxe);forestIndex = 2;forest.nextEvent(forestIndex);}));
-		getWeapon.addChoice(new Choice("Sword", () -> {player.addItem(oldSword);player.getInventory().setEquippedWeapon(oldSword);forestIndex = 2; forest.nextEvent(forestIndex);}));
+		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 45, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
+		getWeapon.addChoice(new Choice("Sword", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Sword", 5, 7 , 63, 1));forestIndex = 2; forest.nextEvent(forestIndex);}));
 
 		forest.addEvent(getWeapon);
 			//	Event Index 2
@@ -145,7 +160,7 @@ public class TextGame {
 		Shop tavern = new Shop("Tavern");
 		Choice[] nearbyLocations = {goTo("Forest", () -> {createForest();})};
 
-		tavern.addItem(stick);
+		tavern.addItem(new Item("Stick", 0));
 
 		tavern.setNearbyLocations(nearbyLocations);
 		tavern.nextEvent(tavernIndex);
@@ -153,16 +168,20 @@ public class TextGame {
 		return tavern;
 	}
 	
-	
-	public static void run() {
+	public static void createPlayer() {
 		player.setMaxHealth(20);
 		player.getStats().resetGame();
 
 		Event gameOver = new Event("You Died", false);
-		gameOver.addChoice(new Choice("Restart Game", () -> {TextGame.run();}));
+		gameOver.addChoice(new Choice("Restart Game", TextGame::run));
 		gameOver.addChoice(new Choice("Quit", () -> {}));
 		player.setDeathEvent(gameOver);
 
+		player.equip(new Armor("Prison Uniform", 2, 0, 0));
+		player.equip(new Armor("Prison Uniform", 3, 0, 0));
+	}
+	public static void run() {
+		createPlayer();
 
 		createPrisonWall();
 	}

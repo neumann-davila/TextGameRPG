@@ -90,9 +90,23 @@ public class Character {
 	}
 
 	public void combat(NPC enemy) {
+		stats.getFriendStat(enemy).adjustStat(-50);
 		Event combat = new Event("Health: " + healthBar());
+		//TODO use surroundings (when finished with game)
+		combat.addChoice(new Choice("Attack: " + getEquippedWeapon(), () -> {attack(enemy);adjustHealth(enemy.attack());}));
+		combat.addChoice(new Choice("Run", () -> {
+			if(stats.rollDexterity(enemy.getStats().getDexterity())) {
+				System.out.println("You ran");
+			}
+			else{
+				System.out.println("You failed to run from " + enemy);
+				adjustHealth(enemy.attack());
+			}
+		}));
 
-		combat.addChoice(new Choice("Attack: " + getEquippedWeapon(), () -> {attack(enemy); }));
+		while(tempHealth > 0 && enemy.getHealth() > 0) {
+			combat.displayEvent();
+		}
 	}
 	
 	public void setDeathEvent(Event event) {
@@ -110,7 +124,14 @@ public class Character {
 
 										//	---Inventory Methods---	\\
 
-
+	public void equip(Item item) {
+		if(item instanceof Weapon) {
+			inventory.setEquippedWeapon((Weapon) item);
+		}
+		else if (item instanceof Armor) {
+			inventory.equipArmor((Armor) item);
+		}
+	}
 	public Inventory getInventory() {
 		return inventory;
 	}
@@ -150,6 +171,7 @@ public class Character {
 	}
 	
 	public void pickPocket(Character recipiant) {
+		//TODO pickPocket coins
 			//	finalize stat system idea
 			//	create an if statement that allows for a chance of failure
 		if(recipiant.getStats().rollDexterity(this.stats.getDexterity())) {

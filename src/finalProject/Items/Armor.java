@@ -9,7 +9,7 @@
 package finalProject.Items;
 
 public class Armor extends Item{
-    private int healthInc;
+    private int deffenseInc;
     private int armorType;
 
     /*
@@ -17,15 +17,13 @@ public class Armor extends Item{
      * 2 - chest-plate
      * 3 - leggings
      * 4 - boots
-     * TODO split charm from armor?
-     * 5 - charm
      *
      */
 
     @Override public String toString(){
         String summary = "";
         summary +=  "\n" +
-                    "     Defense: " + healthInc;
+                    "     Defense: " + deffenseInc;
 
         return super.toString() + summary;
     }
@@ -34,12 +32,12 @@ public class Armor extends Item{
     }
 
     public int getInc() {
-        return healthInc;
+        return deffenseInc;
     }
 
-    public Armor(String name, int armorType, int healthInc, int price) {
+    public Armor(String name, int armorType, int deffenseInc, int price) {
         this.name = name;
-        this.healthInc = healthInc;
+        this.deffenseInc = deffenseInc;
         this.armorType = armorType;
         this.price = price;
     }
