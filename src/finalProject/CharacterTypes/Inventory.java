@@ -16,9 +16,10 @@ import finalProject.EventStructure.Event;
 import finalProject.Items.*;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Random;
+
 public class Inventory {
-    private Scanner input = new Scanner(System.in);
+    private Random rand = new Random();
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private Event displayInventory = new Event("What would you like to do in your inventory", false);
@@ -152,17 +153,22 @@ public class Inventory {
         if(equippedHelm != null) {
             totalIncrease += equippedHelm.getInc();
         }
-        else if(equippedChest != null) {
+        if(equippedChest != null) {
             totalIncrease += equippedChest.getInc();
         }
-        else if(equippedLeg != null) {
+        if(equippedLeg != null) {
             totalIncrease += equippedLeg.getInc();
         }
-        else if(equippedBoot != null) {
+        if(equippedBoot != null) {
             totalIncrease += equippedBoot.getInc();
         }
+        if(totalIncrease <= 0) {
+            return 0;
+        }
 
-        return totalIncrease;
+        int finalIncrease = rand.nextInt(totalIncrease);
+
+        return finalIncrease;
     }
     public void unequipEvent() {
         Event unequip = new Event("What item do you want to unequip");

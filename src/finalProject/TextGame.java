@@ -61,7 +61,7 @@ public class TextGame {
 	public static NPC createOldMan() {
 		NPC oldMan = new NPC("Old man", 6, 20);
 		
-		oldMan.addItem(new Weapon("Cane", 1, 3, 35, 1));
+		oldMan.getInventory().setEquippedWeapon(new Weapon("Cane", 40, 41, 99, 1));
 		
 		player.getStats().getFriendStat(oldMan).setStat(80);
 		
@@ -138,7 +138,7 @@ public class TextGame {
 		forest.addEvent(enterCampsite);
 			//	Event Index 1
 		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 45, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
+		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 1, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
 		getWeapon.addChoice(new Choice("Sword", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Sword", 5, 7 , 63, 1));forestIndex = 2; forest.nextEvent(forestIndex);}));
 
 		forest.addEvent(getWeapon);
@@ -174,10 +174,10 @@ public class TextGame {
 
 		Event gameOver = new Event("You Died", false);
 		gameOver.addChoice(new Choice("Restart Game", TextGame::run));
-		gameOver.addChoice(new Choice("Quit", () -> {}));
+		gameOver.addChoice(new Choice("Quit", () -> {System.exit(0);}));
 		player.setDeathEvent(gameOver);
 
-		player.equip(new Armor("Prison Uniform", 2, 0, 0));
+		player.equip(new Armor("Prison Uniform", 2, 8, 0));
 		player.equip(new Armor("Prison Uniform", 3, 0, 0));
 	}
 	public static void run() {
