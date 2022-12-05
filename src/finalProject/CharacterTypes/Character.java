@@ -169,7 +169,7 @@ public class Character {
 			Item tempItem = inventory.getItem(discardIndex - 1);
 			
 			Event confirmGive = new Event("Are you sure you want to give:\n" + tempItem, false);
-			confirmGive.addChoice(new Choice("Yes", () -> {recipiant.receiveItem(stats.getFriendStat(recipiant), tempItem);removeItem(discardIndex);}));
+			confirmGive.addChoice(new Choice("Yes", () -> {recipiant.receiveItem(stats.getFriendStat(recipiant), tempItem);inventory.remove(tempItem);}));
 			confirmGive.addChoice(new Choice("No", () -> {}));
 			
 			confirmGive.displayEvent();

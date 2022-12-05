@@ -61,7 +61,7 @@ public class TextGame {
 	public static NPC createOldMan() {
 		NPC oldMan = new NPC("Old man", 6, 20);
 		
-		oldMan.getInventory().setEquippedWeapon(new Weapon("Cane", 40, 41, 99, 1));
+		oldMan.getInventory().setEquippedWeapon(new Weapon("Cane", 1, 3, 47, 1));
 		
 		player.getStats().getFriendStat(oldMan).setStat(80);
 		

@@ -19,6 +19,9 @@ public class Choice {
 	public String getDescription() {
 		return this.choiceDescription;
 	}
+	public String getOutcomeDescription() {
+		return this.outcomeDescription;
+	}
 	public void choiceRun() {
 		if(outcomeDescription != null) {
 			System.out.println("\033[93m" + outcomeDescription);

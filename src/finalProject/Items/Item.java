@@ -51,8 +51,8 @@ public class Item {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	public void addAmount(int amount) {
-		this.amount = amount;
+	public void addAmount() {
+		this.amount++;
 	}
 	
 	public void adjustAmount(int amount) {
@@ -68,9 +68,8 @@ public class Item {
 	public Item(String name, int price) {
 		this.name = name;
 		this.price = price;
-		this.amount = 1;
 		this.stackable = true;
-	}
+    	}
 	
 	public Item(String name, int price, int amount) {
 		this.name = name;

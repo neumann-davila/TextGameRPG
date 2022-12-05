@@ -11,15 +11,18 @@
 
 package finalProject.CharacterTypes;
 
+import com.sun.security.jgss.GSSUtil;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Inventory {
     private Random rand = new Random();
+    private Scanner input = new Scanner(System.in);
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private Event displayInventory = new Event("What would you like to do in your inventory", false);
@@ -103,44 +106,61 @@ public class Inventory {
         inventory.remove(index);
     }
 
+        //for stackable items to remove specific amounts
+    public void remove(Item item, int amount) {
+        item.adjustAmount(-amount);
+    }
     public void remove(Item item) {
 
-        for(int i = 0; i < inventory.size(); i++) {
-            if(item.equals(inventory.get(i))) {
-                for(int j = 0; j < displayInventory.getChoices().size(); j++) {
-                    if(("" + item).equals(displayInventory.getChoices().get(j).getDescription())) {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (item.equals(inventory.get(i))) {
+                for (int j = 0; j < displayInventory.getChoices().size(); j++) {
+                    if (("" + item).equals(displayInventory.getChoices().get(j).getDescription())) {
                         displayInventory.getChoices().remove(j);
                     }
                 }
-                inventory.remove(i);
-
+                if(item.getAmount() == 1) {
+                    inventory.remove(i);
+                }
+                else {
+                    System.out.println("How many would you like to use?");
+                    int tempInt = input.nextInt();
+                    inventory.get(i).adjustAmount(-tempInt);
+                }
                 break;
             }
         }
     }
 
+
     public void addItem(Item newItem) {
         if(inventory.size() < 8) {
                 //  checks if the item is stackable
             if(newItem.isStackable()) {
-                    // cycles through the inventory to find if the item it already in th
+                boolean found = false;
+
+                    // cycles through the inventory to find if the item is already in the inventory
                 for (int i = 0; i < inventory.size(); i++) {
                         //  compares the names of each Item
-                    if (("" + newItem).equals("" + inventory.get(i))) {
+                    if ((newItem.getName()).equals(inventory.get(i).getName())) {
                             // Item choice is removed
-                        for(int j = 0; j < displayInventory.getChoices().size(); j++) {
-                            if(("" + newItem).equals(displayInventory.getChoices().get(j).getDescription())) {
-                                displayInventory.getChoices().remove(j);
-                            }
-                        }
-                            //   item amount is adjusted
-                        inventory.get(i).adjustAmount(newItem.getAmount());
-
+                        System.out.println("test");
+                        System.out.println(inventory.get(i).getAmount());
+                        inventory.get(i).addAmount();
+                        System.out.println(inventory.get(i).getAmount());
+                        displayInventory.getChoices().set(i, new Choice("" + inventory.get(i), () -> {interact(newItem);}));
+                        found = true;
                     }
                 }
-            }
+                if(!found) {
                     inventory.add(newItem);
-                    displayInventory.addChoice(new Choice("" + newItem,() -> {interact(newItem);}));
+                    displayInventory.addChoice(new Choice("" + newItem, () -> {interact(newItem);}));
+                }
+            }
+            else {
+                inventory.add(newItem);
+                displayInventory.addChoice(new Choice("" + newItem,() -> {interact(newItem);}));
+           }
         }
         else {
             System.out.println("No space in Inventory");

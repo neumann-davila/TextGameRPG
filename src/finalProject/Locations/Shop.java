@@ -26,10 +26,12 @@ public class Shop extends Location{
 	}
 	
 	public void displayShop() {
+		for (Item tempItem:forSale) {
+			tempItem.setAmount(1);
+		}
 		Event displayShop = new Event("What would you like to buy?");
-		for(int i = 0; i < forSale.size(); i++) {
-			Item tempItem = forSale.get(i);
-			displayShop.addChoice(new Choice("" + forSale.get(i), () -> {TextGame.player.purchaseItem(tempItem);}));
+		for(Item tempItem: forSale) {
+			displayShop.addChoice(new Choice("" + tempItem, () -> {TextGame.player.purchaseItem(tempItem);}));
 		}
 		displayShop.addChoice(new Choice("Back", () -> {}));
 		displayShop.displayEvent();
