@@ -11,10 +11,10 @@
 
 package finalProject.CharacterTypes;
 
-import com.sun.security.jgss.GSSUtil;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
+import finalProject.Items.Weapons.Weapon;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -40,6 +40,7 @@ public class Inventory {
                         //  ---Money---  \\
     private int money = 0;
 
+                            //      ---Main Function Methods---     \\
     public String toString() {
         String summary = "";
         for (int i = 0; i < inventory.size(); i++) {
@@ -51,11 +52,8 @@ public class Inventory {
     public void interact(Item newItem) {
         Event interact = new Event("What would you like to do with " + newItem, false);
                 //  Creates discard method
-        Event confirmDis = new Event("Are you sure you want to discard: " + newItem, false);
-        confirmDis.addChoice(new Choice("Yes", () -> {inventory.remove(newItem);}));
-        confirmDis.addChoice(new Choice("No", () -> {}));
 
-        interact.addChoice(new Choice("Discard",() -> {confirmDis.displayEvent();interact(newItem);}));
+        interact.addChoice(new Choice("Discard",() -> {remove(newItem);displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
 
         System.out.println(newItem);
         if(newItem instanceof Weapon) {
@@ -76,7 +74,7 @@ public class Inventory {
             }
         }
 
-        interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);display();}));
+        interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
 
         interact.displayEvent();
     }
@@ -123,9 +121,16 @@ public class Inventory {
                     inventory.remove(i);
                 }
                 else {
-                    System.out.println("How many would you like to use?");
-                    int tempInt = input.nextInt();
-                    inventory.get(i).adjustAmount(-tempInt);
+                    System.out.println("How many would you like to remove?");
+                    try {
+                        int tempInt = Integer.parseInt(input.nextLine().strip());
+                        inventory.get(i).adjustAmount(-tempInt);
+                        displayInventory.addChoice(new Choice("" + item, () -> {interact(item);}));
+                    }
+                    catch(Exception e) {
+                        System.out.println("Invalid Input");
+                        remove(item);
+                    }
                 }
                 break;
             }
@@ -138,16 +143,13 @@ public class Inventory {
                 //  checks if the item is stackable
             if(newItem.isStackable()) {
                 boolean found = false;
-
                     // cycles through the inventory to find if the item is already in the inventory
                 for (int i = 0; i < inventory.size(); i++) {
                         //  compares the names of each Item
                     if ((newItem.getName()).equals(inventory.get(i).getName())) {
-                            // Item choice is removed
-                        System.out.println("test");
-                        System.out.println(inventory.get(i).getAmount());
-                        inventory.get(i).addAmount();
-                        System.out.println(inventory.get(i).getAmount());
+                        Item tempItem = inventory.get(i);
+
+                        inventory.set(i, new Item(newItem.getName(), tempItem.getAmount() + newItem.getAmount() , newItem.getPrice()));
                         displayInventory.getChoices().set(i, new Choice("" + inventory.get(i), () -> {interact(newItem);}));
                         found = true;
                     }
@@ -166,6 +168,25 @@ public class Inventory {
             System.out.println("No space in Inventory");
         }
     }
+
+    public boolean contains(String itemName) {
+        for(Item tempItem:inventory) {
+            if(tempItem.getName().equals(itemName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void useItem(String itemName) {
+        for(Item tempItem:inventory) {
+            if(tempItem.getName().equals(itemName)) {
+                 tempItem.adjustAmount(-1);
+            }
+        }
+    }
+
+                         //          ---Equippable Item Methods---          \\
 
     public int getArmorIncrease() {
         int totalIncrease = 0;
@@ -256,6 +277,7 @@ public class Inventory {
         remove(weapon);
     }
 
+                            //      ---Money Methods---        \\
     public void purchaseItem(Item item) {
         if (item.getPrice() > this.money) {
             System.out.println("You do not have enough money for this");

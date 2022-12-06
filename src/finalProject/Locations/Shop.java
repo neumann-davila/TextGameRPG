@@ -18,6 +18,7 @@ import finalProject.EventStructure.*;
 import finalProject.Items.Item;
 
 public class Shop extends Location{
+	private Scanner input = new Scanner(System.in);
 	private ArrayList<Item> forSale = new ArrayList<Item>();
 	private Event shop;
 	
@@ -31,7 +32,20 @@ public class Shop extends Location{
 		}
 		Event displayShop = new Event("What would you like to buy?");
 		for(Item tempItem: forSale) {
-			displayShop.addChoice(new Choice("" + tempItem, () -> {TextGame.player.purchaseItem(tempItem);}));
+			displayShop.addChoice(new Choice("" + tempItem, () -> {
+				if(tempItem.isStackable()) {
+					System.out.println("How many would you like to purchase?");
+					try {
+						int tempInt = Integer.parseInt(input.nextLine().strip());
+						tempItem.adjustAmount(tempInt - 1);
+					}
+					catch(Exception e) {
+						System.out.println("Invalid Input");
+						displayShop();
+					}
+				}
+				TextGame.player.purchaseItem(tempItem);
+			}));
 		}
 		displayShop.addChoice(new Choice("Back", () -> {}));
 		displayShop.displayEvent();

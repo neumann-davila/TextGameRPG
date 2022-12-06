@@ -8,17 +8,18 @@
  *
  */
 
-package finalProject.Items;
+package finalProject.Items.Weapons;
+
+import finalProject.Items.Item;
 
 import java.util.Random;
 
 public class Weapon extends Item {
-	private int damageMin;
-	private int damageMax;
-	private int hitChance;
+	protected int damageMin;
+	protected int damageMax;
+	protected int hitChance;
 
-	//TODO ranged
-	
+
 	@Override public String toString() {
 		String summary = "";
 		

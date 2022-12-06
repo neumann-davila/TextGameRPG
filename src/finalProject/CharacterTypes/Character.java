@@ -9,13 +9,13 @@
 
 package finalProject.CharacterTypes;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
+import finalProject.Items.Weapons.*;
 
 
 public class Character {
@@ -95,18 +95,31 @@ public class Character {
 			Event combat = new Event("Health: " + healthBar());
 			//TODO use surroundings (when finished with game)
 			combat.addChoice(new Choice("Attack: " + getEquippedWeapon(), () -> {
-				attack(enemy);
+				if(getEquippedWeapon() instanceof Weapon) {
+					//TODO refine attack sequence display
+					attack(enemy);
 
-				int damageDone = enemy.attack();
-				int damageBlocked = inventory.getArmorIncrease();
-				int damageTaken = damageDone - damageBlocked;
-				if(damageTaken < 0 && damageBlocked > 0) {
-					System.out.println(damageBlocked + " damage Blocked");
+					System.out.println(enemy + "counter attacks");
+					int damageDone = enemy.attack();
+					int damageBlocked = inventory.getArmorIncrease();
+					int damageTaken = damageDone - damageBlocked;
+					if (damageTaken < 0 && damageBlocked > 0) {
+						System.out.println(damageBlocked + " damage Blocked");
+					} else if (damageBlocked > 0 && damageDone < 0) {
+						System.out.println("Damage Blocked");
+					}
+					adjustHealth(damageTaken);
 				}
-				else if(damageBlocked > 0 && damageDone < 0) {
-					System.out.println("Damage Blocked");
+				else if(getEquippedWeapon() instanceof RangedWeapon) {
+					RangedWeapon weapon = (RangedWeapon)getEquippedWeapon();
+					if(inventory.contains(weapon.getAmmoName())) {
+						attack(enemy);
+						inventory.useItem(weapon.getAmmoName());
+					}
+					else {
+						System.out.println("You do not have any" + weapon.getAmmoName() + " in your inventory");
+					}
 				}
-				adjustHealth(damageTaken);
 			}));
 
 			combat.addChoice(new Choice("Run", () -> {

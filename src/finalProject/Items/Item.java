@@ -71,7 +71,7 @@ public class Item {
 		this.stackable = true;
     	}
 	
-	public Item(String name, int price, int amount) {
+	public Item(String name, int amount, int price) {
 		this.name = name;
 		this.price = price;
 		this.amount = amount;

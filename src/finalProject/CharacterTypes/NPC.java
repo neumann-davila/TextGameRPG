@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import finalProject.TextGame;
 import finalProject.EventStructure.Event;
 import finalProject.Items.Item;
-import finalProject.Items.Weapon;
 
 public class NPC extends Character {
 

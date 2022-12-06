@@ -16,6 +16,7 @@ import finalProject.CharacterTypes.*;
 import finalProject.CharacterTypes.Character;
 import finalProject.EventStructure.*;
 import finalProject.Items.*;
+import finalProject.Items.Weapons.Weapon;
 import finalProject.Locations.*;
 
 public class TextGame {
