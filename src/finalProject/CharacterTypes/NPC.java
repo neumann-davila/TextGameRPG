@@ -75,7 +75,11 @@ public class NPC extends Character {
 			giftsReceived++;
 		}
 	}
-	
+
+	public void combatReact() {
+
+	}
+
 	public int attack() {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
@@ -89,8 +93,8 @@ public class NPC extends Character {
 		}
 	}
 	
-	@Override public void displayDeathEvent() {
-		TextGame.player.getStats().addXp(getStats().getXp().getStat());
+	public void displayDeathEvent(Character killer) {
+		killer.getStats().addXp(getStats().getXp().getStat());
 		getDeathEvent().displayEvent();
 	}
 	

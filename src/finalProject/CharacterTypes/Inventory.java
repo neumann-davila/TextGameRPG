@@ -30,7 +30,7 @@ public class Inventory {
     Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
 
 
-                        //  ---Equippable Items---  \\
+                    //  ---Equippable Items---  \\
     private Weapon equippedWeapon = new Weapon();
     private Armor equippedHelm;
     private Armor equippedChest;
@@ -105,9 +105,6 @@ public class Inventory {
     }
 
         //for stackable items to remove specific amounts
-    public void remove(Item item, int amount) {
-        item.adjustAmount(-amount);
-    }
     public void remove(Item item) {
 
         for (int i = 0; i < inventory.size(); i++) {
@@ -186,6 +183,13 @@ public class Inventory {
         }
     }
 
+    public void useItem(String itemName, int amount) {
+        for(Item tempItem:inventory) {
+            if(tempItem.getName().equals(itemName)) {
+                tempItem.adjustAmount(-amount);
+            }
+        }
+    }
                          //          ---Equippable Item Methods---          \\
 
     public int getArmorIncrease() {

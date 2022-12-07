@@ -22,7 +22,7 @@ import finalProject.Locations.*;
 public class TextGame {
 	static Scanner input = new Scanner(System.in);
 		//	Main Player declaration
-	public static Character player =  new Character();
+	public static Player player =  new Player();
 
 
 		/*

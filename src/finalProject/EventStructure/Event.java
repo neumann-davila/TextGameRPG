@@ -119,7 +119,7 @@ public class Event {
 			else {
 				removeNPC(npc);
 				System.out.println("\nYou killed the " + npc);
-				npc.displayDeathEvent();
+				npc.displayDeathEvent(TextGame.player);
 			}
 
 		}));
