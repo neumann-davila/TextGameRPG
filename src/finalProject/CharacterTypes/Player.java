@@ -13,29 +13,22 @@ package finalProject.CharacterTypes;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
-import finalProject.Items.Weapons.*;
 
 public class Player extends Character{
 
 
-
-    public void combatTurn(NPC enemy) {
-
-        }
-    }
-
-    public void attack(NPC enemy) {
+    public int attack(NPC enemy) {
         int damage = inventory.getEquippedWeapon().attack();
         if(damage > 0) {
             int extra = rand.nextInt(stats.getStrength().getStat());
 
-            enemy.adjustHealth(-(damage + extra));
 
             System.out.println("You do " + damage + " + " + extra +  " damage to the " + enemy + ".");
-
+            return damage + extra;
         }
         else {
             System.out.println("You miss!");
+            return 0;
         }
     }
 

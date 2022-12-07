@@ -111,19 +111,8 @@ public class Event {
 		
 		NPCChoices.add(new Choice("Talk to " + npc, () -> {System.out.println(npc.getDialogue(friendStat));}));
 		NPCChoices.add(new Choice("Give something to " + npc, () -> {TextGame.player.giveItem(npc);}));
-		NPCChoices.add(new Choice("Attack " + npc, () -> {
-			TextGame.player.combat(npc);
-			if(TextGame.player.getHealth() < 0) {
-				TextGame.player.displayDeathEvent();
-			}
-			else {
-				removeNPC(npc);
-				System.out.println("\nYou killed the " + npc);
-				npc.displayDeathEvent(TextGame.player);
-			}
-
-		}));
-		NPCChoices.add(new Choice("Pickpocket " + npc, () -> {npc.pickPocket(TextGame.player);TextGame.player.getStats().adjustFriendStat(friendStat, -20);}));
+		NPCChoices.add(new Choice("Attack " + npc, () -> {new CombatEvent(TextGame.player, npc);}));
+		//NPCChoices.add(new Choice("Pickpocket " + npc, () -> {npc.pickPocket(TextGame.player);TextGame.player.getStats().adjustFriendStat(friendStat, -20);}));
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
 		for (int i = 1; i < NPCChoices.size() + 1;i++ ) {

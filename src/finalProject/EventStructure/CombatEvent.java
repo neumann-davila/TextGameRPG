@@ -44,9 +44,8 @@ package finalProject.EventStructure;
  * 			- Counter Attack
  * 				- only possible if reacting from a melee weapon
  * 				- runs as a normal attack would
- * 				- half Damage? <---------------------
- * 				- chance to block? <-----------------
- * 			- Block or dodge
+ * 				- half Damage
+ * 			- Dodge
  * 				- since Blocking damage is passively done with attacks this will need to be unique
  *				- Potentially a dex roll to see if you can dodge all damage
  *
@@ -63,65 +62,126 @@ import finalProject.Items.Weapons.RangedWeapon;
 
 public class CombatEvent {
     private Player player;
-    private NPC enemy;
-    private NPC enem1;
 
-    public void PlayerCombatTurn(NPC enemy) {
-        player.getStats().getFriendStat(enemy).adjustStat(-50);
-        while (player.getHealth() > 0 && enemy.getHealth() > 0) {
-            Event combat = new Event("Health: " + player.healthBar());
-            combat.addChoice(new Choice("Attack: " + player.getEquippedWeapon(), () -> {
+    public void playerCombatTurn(NPC enemy) {
 
-                if (player.getEquippedWeapon() instanceof RangedWeapon) {
-                    RangedWeapon weapon = (RangedWeapon) player.getEquippedWeapon();
-                    if (player.getInventory().contains(weapon.getAmmoName())) {
-                        player.attack(enemy);
-                        player.getInventory().useItem(weapon.getAmmoName());
+        if(player.getHealth() <= 0) {
+            player.displayDeathEvent();
+            return;
+        }
+        else if(enemy.getHealth() <= 0) {
+            enemy.displayDeathEvent();
+            return;
+        }
 
-                    } else {
-                        System.out.println("You do not have any" + weapon.getAmmoName() + " in your inventory");
-                    }
+        Event combat = new Event("Health: " + player.healthBar());
+        combat.addChoice(new Choice("Attack: " + player.getEquippedWeapon(), () -> {
+
+            if (player.getEquippedWeapon() instanceof RangedWeapon) {
+                RangedWeapon weapon = (RangedWeapon) player.getEquippedWeapon();
+                if (player.getInventory().contains(weapon.getAmmoName())) {
+                    int damage = player.attack(enemy);
+                    player.getInventory().useItem(weapon.getAmmoName());
+
+                    npcCounter(enemy, player, damage);
                 } else {
-                    player.attack(enemy);
-
-                    int damageDone = enemy.attack();
-                    int damageBlocked = player.getInventory().getArmorIncrease();
-                    int damageTaken = damageDone - damageBlocked;
-                    if (damageTaken < 0 && damageBlocked > 0) {
-                        System.out.println(damageBlocked + " damage blocked by armor");
-                    } else if (damageBlocked > 0 && damageDone < 0) {
-                        System.out.println("Damage blocked by armor");
-                    }
-                    player.adjustHealth(damageTaken);
+                    System.out.println(player + " does not have any" + weapon.getAmmoName() + " in their inventory");
+                    playerCombatTurn(enemy);
                 }
-            }));
+            } else {
+                int damage = player.attack(enemy);
+                npcCounter(enemy, player, damage);
+            }
+        }));
 
-            combat.addChoice(new Choice("Run", () -> {
-                if (player.getStats().rollDexterity(enemy.getStats().getDexterity())) {
-                    System.out.println("You ran");
-                } else {
-                    System.out.println("You failed to run from " + enemy);
-                    player.adjustHealth(enemy.attack());
-                }
+        combat.addChoice(new Choice("Run", () -> {
+            if (player.getStats().rollDexterity(enemy.getStats().getDexterity())) {
+                System.out.println(player + " ran");
+            } else {
+                System.out.println(player + " failed to run from " + enemy);
+            }
+        }));
+
+        combat.displayEvent();
+        npcCombatTurn(enemy);
+    }
+
+    public void playerCounter(NPC npc, int damage) {
+        Event counter = new Event(  "During the attack you try to... \n" +
+                                    "Choose an action:", false);
+        counter.addChoice(new Choice("Dodge", () -> {
+            if(player.getStats().rollDexterity(npc.getStats().getDexterity())) {
+                System.out.println(player + " dodged the attack");
+            }
+            else {
+                System.out.println("Dodge failed");
+                player.adjustHealth(-damage);
+            }
+        }));
+        if(!(npc.getEquippedWeapon() instanceof RangedWeapon)) {
+            counter.addChoice(new Choice("Counter attack", () -> {
+                int counterDamage = player.attack(npc);
+                counterDamage /= 2;
+                npc.adjustHealth(-counterDamage);
+                System.out.println(player + " counter attacked!\n" +
+                        counterDamage + " damage was done to " + npc);
             }));
-            combat.displayEvent();
+        }
+
+        counter.displayEvent();
+    }
+
+    public void npcCombatTurn(NPC npc) {
+        if(player.getHealth() <= 0) {
+            player.displayDeathEvent();
+            return;
+        }
+        else if(npc.getHealth() <= 0) {
+            npc.displayDeathEvent();
+            return;
+        }
+
+        int damage = npc.attack();
+        playerCounter(npc, damage);
+        playerCombatTurn(npc);
+    }
+
+    public void npcCounter(NPC npc, Character enemy, int damage) {
+        int damageBlocked = npc.getInventory().getArmorIncrease();
+        int damageTaken = damage - damageBlocked;
+        if((enemy.getEquippedWeapon() instanceof RangedWeapon || npc.getHealth() < enemy.getHealth()) && damageTaken > 0) {
+            if(npc.getStats().rollDexterity(enemy.getStats().getDexterity())) {
+                System.out.println(npc + " dodged the attack");
+                return;
+            }
+
+        }
+        else {
+            int counterDamage = npc.attack();
+            counterDamage /= 2;
+            player.adjustHealth(-counterDamage);
+            System.out.println(npc + " counter attacked!\n" +
+                                counterDamage + " damage was done to " + enemy);
+        }
+
+        System.out.println(npc + " blocked " + damageBlocked + "damage with their armor");
+        System.out.println(npc + " took " + damageTaken + " damage");
+        npc.adjustHealth(-damageTaken);
+    }
+
+    public CombatEvent(Player player, NPC npc) {
+        this.player = player;
+        System.out.println("You enter combat with " + npc);
+
+
+        if(npc.getStats().getDexterity().getStat() < player.getStats().getDexterity().getStat()) {
+            playerCombatTurn(npc);
+        }
+        else{
+            npcCombatTurn(npc);
         }
     }
-
-    public void NPCCounter() {
-
-    }
-
-
-
-
-    public CombatEvent(Player player, NPC enemy) {
-            this.player = player;
-            this.enemy = enemy;
-            PlayerCombatTurn(enemy);
-    }
     public CombatEvent(NPC enemy, NPC enemy1) {
-        this.enemy = enemy;
-
+        //TODO make NPC combat Events
     }
 }
