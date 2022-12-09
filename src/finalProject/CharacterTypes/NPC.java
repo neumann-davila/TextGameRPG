@@ -76,16 +76,13 @@ public class NPC extends Character {
 		}
 	}
 
-	public void combatReact() {
-
-	}
 
 	public int attack() {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
 			int extra = rand.nextInt(stats.getStrength().getStat());
-			System.out.println(name + " did " + damage + " + " + extra + " damage");
-			return -(damage + extra);
+			System.out.print(name + " did " + damage + " + " + extra + " damage");
+			return (damage + extra);
 		}
 		else {
 			System.out.println(name + " missed");
@@ -94,6 +91,7 @@ public class NPC extends Character {
 	}
 	
 	public void displayDeathEvent(Character killer) {
+		//TODO add loot feature
 		killer.getStats().addXp(getStats().getXp().getStat());
 		getDeathEvent().displayEvent();
 	}

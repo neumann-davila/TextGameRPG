@@ -8,7 +8,7 @@
 package finalProject.EventStructure;
 
 
-/* TODO
+/*
  *								---Combat System---
  *
  * The combat system is going to have multiple steps in its entirety
@@ -59,6 +59,8 @@ import finalProject.CharacterTypes.*;
 import finalProject.CharacterTypes.Character;
 import finalProject.Items.Weapons.RangedWeapon;
 
+import java.util.Locale;
+
 
 public class CombatEvent {
     private Player player;
@@ -100,31 +102,46 @@ public class CombatEvent {
             } else {
                 System.out.println(player + " failed to run from " + enemy);
             }
+            sleep(700);
         }));
 
         combat.displayEvent();
         npcCombatTurn(enemy);
     }
 
-    public void playerCounter(NPC npc, int damage) {
+    public void playerCounter(NPC npc) {
         Event counter = new Event(  "During the attack you try to... \n" +
                                     "Choose an action:", false);
         counter.addChoice(new Choice("Dodge", () -> {
             if(player.getStats().rollDexterity(npc.getStats().getDexterity())) {
-                System.out.println(player + " dodged the attack");
+                System.out.println(player + " dodged the attack!");
+                 sleep(700);
             }
             else {
                 System.out.println("Dodge failed");
+                sleep(700);
+                int damage = npc.attack();
+                if(damage != 0) {
+                    System.out.println(" to " + player);
+                }
                 player.adjustHealth(-damage);
+                sleep(700);
             }
         }));
         if(!(npc.getEquippedWeapon() instanceof RangedWeapon)) {
             counter.addChoice(new Choice("Counter attack", () -> {
+                System.out.println(player + " counter attacked!");
+                sleep(700);
                 int counterDamage = player.attack(npc);
                 counterDamage /= 2;
                 npc.adjustHealth(-counterDamage);
-                System.out.println(player + " counter attacked!\n" +
-                        counterDamage + " damage was done to " + npc);
+
+                int damage = npc.attack();
+                if(damage != 0) {
+                    System.out.println(" was done to " + player);
+                }
+
+                player.adjustHealth(-damage);
             }));
         }
 
@@ -141,8 +158,10 @@ public class CombatEvent {
             return;
         }
 
-        int damage = npc.attack();
-        playerCounter(npc, damage);
+        System.out.println(npc + " attacks with their " + npc.getEquippedWeapon().getName().toLowerCase() + "!");
+        sleep(700);
+
+        playerCounter(npc);
         playerCombatTurn(npc);
     }
 
@@ -157,24 +176,43 @@ public class CombatEvent {
 
         }
         else {
+            System.out.println(npc + " counter attacked!");
+            sleep(700);
+
             int counterDamage = npc.attack();
+            if(counterDamage != 0) {
+                System.out.println("to " + enemy);
+            }
+
             counterDamage /= 2;
             player.adjustHealth(-counterDamage);
-            System.out.println(npc + " counter attacked!\n" +
-                                counterDamage + " damage was done to " + enemy);
+            sleep(700);
         }
 
-        System.out.println(npc + " blocked " + damageBlocked + "damage with their armor");
-        System.out.println(npc + " took " + damageTaken + " damage");
-        npc.adjustHealth(-damageTaken);
+        if (damage != 0) {
+            System.out.println(npc + " blocked " + damageBlocked + " damage with their armor");
+            sleep(700);
+            System.out.println(npc + " took " + damageTaken + " damage");
+            npc.adjustHealth(-damageTaken);
+            sleep(700);
+        }
+    }
+
+    private void sleep(long milliSecs) {
+        try{
+            Thread.sleep(milliSecs);
+        }
+        catch(Exception e) {
+            System.out.println(e);
+        }
     }
 
     public CombatEvent(Player player, NPC npc) {
         this.player = player;
         System.out.println("You enter combat with " + npc);
-
-
+        sleep(1000);
         if(npc.getStats().getDexterity().getStat() < player.getStats().getDexterity().getStat()) {
+
             playerCombatTurn(npc);
         }
         else{

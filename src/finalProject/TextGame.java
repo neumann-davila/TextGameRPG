@@ -24,7 +24,6 @@ public class TextGame {
 		//	Main Player declaration
 	public static Player player =  new Player();
 
-
 		/*
 		 * 						---Needed Constructors---
 		 *
@@ -139,7 +138,7 @@ public class TextGame {
 		forest.addEvent(enterCampsite);
 			//	Event Index 1
 		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 1, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
+		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 48, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
 		getWeapon.addChoice(new Choice("Sword", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Sword", 5, 7 , 63, 1));forestIndex = 2; forest.nextEvent(forestIndex);}));
 
 		forest.addEvent(getWeapon);

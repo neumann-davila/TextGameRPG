@@ -50,9 +50,11 @@ public class Event {
 			if (isDefault) {
 				System.out.printf(description);
 				System.out.println("");
+				sleep(500);
 
 				for (int i = 0; i < eventChoices.size(); i++) {
 					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i));
+					sleep(500);
 				}
 				try {
 					int tempInt = Integer.parseInt(input.nextLine().strip());
@@ -67,9 +69,11 @@ public class Event {
 			//	only if default choices are not being used
 			else {
 				System.out.println(description);
+				sleep(500);
 
 				for (int i = 1; i < eventChoices.size() + 1; i++) {
 					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i - 1));
+					sleep(500);
 				}
 
 				getDecision();
@@ -116,6 +120,7 @@ public class Event {
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
 		for (int i = 1; i < NPCChoices.size() + 1;i++ ) {
+			sleep(500);
 			System.out.println(i + ": " + NPCChoices.get(i - 1));
 		}
 		
@@ -153,7 +158,45 @@ public class Event {
 			displayEvent();
 		}	
 	}
-	
+
+	private void slowText(String text) {
+
+		for(int i = 0; i < text.length(); i++) {
+			if(text.substring(i, i + 1).equals(" ")) {
+				System.out.print(text.charAt(i));
+				continue;
+			}
+			else if(text.substring(i, i + 1).equals("\n")) {
+				System.out.print(text.charAt(i));
+
+				try{
+					Thread.sleep(500);
+				}
+				catch(Exception e) {
+					System.out.println(e);
+				}
+				continue;
+			}
+
+			System.out.print(text.charAt(i));
+			try{
+				Thread.sleep(40);
+			}
+			catch(Exception e) {
+				System.out.println(e);
+			}
+		}
+		System.out.println("");
+	}
+
+	private void sleep(long milliSecs) {
+		try{
+			Thread.sleep(milliSecs);
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	}
 									//	---Constructors---	\\
 	
 	public Event() {

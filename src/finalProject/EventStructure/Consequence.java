@@ -10,7 +10,7 @@
 package finalProject.EventStructure;
 
 public interface Consequence {
-	void react() throws InterruptedException;
+	void react();
 }
 
 	//	Interface class allows me to create an abstract method so
