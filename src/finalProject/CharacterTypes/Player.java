@@ -14,6 +14,8 @@ import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
 
+import java.util.ArrayList;
+
 public class Player extends Character{
 
 
@@ -54,28 +56,36 @@ public class Player extends Character{
         }
     }
 
-    public void pickPocket(Character recipiant) {
+    public boolean pickPocket(NPC victim) {
         //TODO rewrite pickPocket
 
-         if(recipiant.getStats().rollDexterity(this.stats.getDexterity())) {
-            System.out.println(inventory + "What would you like to take?\n9: Exit");
-            int stealIndex = input.nextInt();
+         if(stats.rollDexterity(victim.getStats().getDexterity())) {
+          Event pickPocket = new Event("Select one item to steal" , false);
+          for(Item tempItem:victim.getInventory().getInventory()) {
+              pickPocket.addChoice(new Choice("" + tempItem, () -> {
+                  ArrayList<Item> inventory = victim.getInventory().getInventory();
+                  if(tempItem.isStackable()) {
+                      for(int i = 0; i < inventory.size(); i++) {
+                          if(tempItem.getName().equals(inventory.get(i).getName())) {
+                              inventory.get(i).adjustAmount(-1);
+                              addItem(tempItem);
+                          }
 
-            if(stealIndex < 9 && stealIndex > 0) {
-                recipiant.addItem(inventory.getItem(stealIndex - 1));
-                removeItem(stealIndex);
+                      }
+                  }
+                  else {
+                      addItem(tempItem);
+                      inventory.remove(tempItem);
+                  }
 
-            }
-            else if (stealIndex == 9) {
+              }));
+          }
 
-            }
-            else {
-                System.out.println("Invalid Input: Steal");
-                pickPocket(recipiant);
-            }
+            return true;
         }
         else {
-            System.out.println("Failed");
+            System.out.println("PickPocket Failed");
+            return false;
         }
     }
 

@@ -50,11 +50,11 @@ public class Event {
 			if (isDefault) {
 				System.out.printf(description);
 				System.out.println("");
-				sleep(500);
+				sleep(300);
 
 				for (int i = 0; i < eventChoices.size(); i++) {
 					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i));
-					sleep(500);
+					sleep(300);
 				}
 				try {
 					int tempInt = Integer.parseInt(input.nextLine().strip());
@@ -69,11 +69,11 @@ public class Event {
 			//	only if default choices are not being used
 			else {
 				System.out.println(description);
-				sleep(500);
+				sleep(300);
 
 				for (int i = 1; i < eventChoices.size() + 1; i++) {
 					System.out.println("\033[0;37m" + i + ":\033[93m " + eventChoices.get(i - 1));
-					sleep(500);
+					sleep(300);
 				}
 
 				getDecision();
@@ -115,12 +115,17 @@ public class Event {
 		
 		NPCChoices.add(new Choice("Talk to " + npc, () -> {System.out.println(npc.getDialogue(friendStat));}));
 		NPCChoices.add(new Choice("Give something to " + npc, () -> {TextGame.player.giveItem(npc);}));
-		NPCChoices.add(new Choice("Attack " + npc, () -> {new CombatEvent(TextGame.player, npc);}));
+		NPCChoices.add(new Choice("Attack " + npc, () -> {
+			new CombatEvent(TextGame.player, npc);
+			if(npc.getHealth() < 0) {
+				removeNPC(npc);
+			}
+		}));
 		//NPCChoices.add(new Choice("Pickpocket " + npc, () -> {npc.pickPocket(TextGame.player);TextGame.player.getStats().adjustFriendStat(friendStat, -20);}));
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
 		for (int i = 1; i < NPCChoices.size() + 1;i++ ) {
-			sleep(500);
+			sleep(300);
 			System.out.println(i + ": " + NPCChoices.get(i - 1));
 		}
 		

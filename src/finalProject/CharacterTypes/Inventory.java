@@ -190,6 +190,10 @@ public class Inventory {
             }
         }
     }
+
+    public ArrayList<Item> getInventory() {
+        return inventory;
+    }
                          //          ---Equippable Item Methods---          \\
 
     public int getArmorIncrease() {
