@@ -65,8 +65,9 @@ import java.util.Locale;
 public class CombatEvent {
     private Player player;
 
+        // Runs the Combat turn for the player
     public void playerCombatTurn(NPC enemy) {
-
+            //  Checks to see if anyone has died
         if(player.getHealth() <= 0) {
             player.displayDeathEvent();
             return;
@@ -77,8 +78,11 @@ public class CombatEvent {
         }
 
         Event combat = new Event("Health: " + player.healthBar());
+
+            // Checks the equipped Weapon and creates a choice based Weapon type
         combat.addChoice(new Choice("Attack: " + player.getEquippedWeapon(), () -> {
 
+                // If the Weapon is ranged then ammo is required
             if (player.getEquippedWeapon() instanceof RangedWeapon) {
                 RangedWeapon weapon = (RangedWeapon) player.getEquippedWeapon();
                 if (player.getInventory().contains(weapon.getAmmoName())) {
@@ -86,11 +90,16 @@ public class CombatEvent {
                     player.getInventory().useItem(weapon.getAmmoName());
 
                     npcCounter(enemy, player, damage);
-                } else {
+                }
+                else {
+                        //If the player has no ammo the turn simply restarts
                     System.out.println(player + " does not have any" + weapon.getAmmoName() + " in their inventory");
+                    sleep(700);
                     playerCombatTurn(enemy);
                 }
-            } else {
+            }
+            else {
+                // Melee Weapon attack
                 int damage = player.attack(enemy);
                 npcCounter(enemy, player, damage);
             }
@@ -110,9 +119,14 @@ public class CombatEvent {
     }
 
     public void playerCounter(NPC npc) {
+
+            // Runs player counter event
         Event counter = new Event(  "During the attack you try to... \n" +
                                     "Choose an action:", false);
+
+            // Dodging attacks allows for damage negation on a successful dexterity roll
         counter.addChoice(new Choice("Dodge", () -> {
+
             if(player.getStats().rollDexterity(npc.getStats().getDexterity())) {
                 System.out.println(player + " dodged the attack!");
                  sleep(700);
@@ -128,19 +142,33 @@ public class CombatEvent {
                 sleep(700);
             }
         }));
+
+            // Counter-attack allows the player to attack but only dealing half of its possible damage
         if(!(npc.getEquippedWeapon() instanceof RangedWeapon)) {
             counter.addChoice(new Choice("Counter attack", () -> {
+                    //  gets the amount damage that can be blocked
+                int blocked = npc.getInventory().getArmorIncrease();
+                int playerBlocked = player.getInventory().getArmorIncrease();
+
                 System.out.println(player + " counter attacked!");
                 sleep(700);
-                int counterDamage = player.attack(npc);
-                counterDamage /= 2;
-                npc.adjustHealth(-counterDamage);
 
-                int damage = npc.attack();
-                if(damage != 0) {
-                    System.out.println(" was done to " + player);
+
+                int counterDamage = player.counterAttack(npc) - blocked;
+                System.out.println(npc + " blocked " + blocked + " damage with their armor.");
+                sleep(700);
+                if(counterDamage > 0) {
+                    npc.adjustHealth(-counterDamage);
                 }
 
+                int damage = npc.attack() - playerBlocked;
+
+                if(damage > 0) {
+                    System.out.println(player + " blocked " + blocked + " damage with their armor.");
+                    System.out.println(damage + " was done to " + player);
+                }
+
+                System.out.println("");
                 player.adjustHealth(-damage);
             }));
         }
@@ -164,7 +192,7 @@ public class CombatEvent {
         playerCounter(npc);
         playerCombatTurn(npc);
     }
-
+    //TODO armor decrease not added everywhere
     public void npcCounter(NPC npc, Character enemy, int damage) {
         int damageBlocked = npc.getInventory().getArmorIncrease();
         int damageTaken = damage - damageBlocked;

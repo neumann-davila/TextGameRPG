@@ -60,7 +60,8 @@ public class TextGame {
 		
 	public static NPC createOldMan() {
 		NPC oldMan = new NPC("Old man", 6, 20);
-		
+
+		oldMan.addMoney(5);
 		oldMan.getInventory().setEquippedWeapon(new Weapon("Cane", 1, 3, 47, 1));
 		
 		player.getStats().getFriendStat(oldMan).setStat(80);
@@ -73,7 +74,7 @@ public class TextGame {
 		oldMan.addDialogue("I hate you", -1);
 		
 		Event death = new Event("You see the corpse of the man you just killed\nWhat wold you like to do", false);
-		death.addChoice(new Choice("Loot Body", () -> {}));
+		death.addChoice(new Choice("Loot Body", () -> {oldMan.loot(player); death.displayEvent();}));
 		death.addChoice(new Choice("Leave", () -> {}));
 		oldMan.setDeathEvent(death);
 				

@@ -111,7 +111,9 @@ public class Character {
 		inventory.addItem(item);
 	}
 
-
+	public void addMoney(int amount) {
+		inventory.adjustMoney(amount);
+	}
 	public void purchaseItem(Item item) {
 		inventory.purchaseItem(item);
 	}

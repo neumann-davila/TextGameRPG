@@ -13,6 +13,7 @@ package finalProject.CharacterTypes;
 
 import java.util.ArrayList;
 
+import finalProject.EventStructure.Choice;
 import finalProject.TextGame;
 import finalProject.EventStructure.Event;
 import finalProject.Items.Item;
@@ -89,9 +90,52 @@ public class NPC extends Character {
 			return 0;
 		}
 	}
-	
-	public void displayDeathEvent(Character killer) {
-		//TODO add loot feature
+
+	public void loot(Player player) {
+		Event loot = new Event("Select what items you would like to take");
+		inventory.unequipAll();
+		//Iterates through every item in npc inventory
+		for (Item tempItem : inventory.getInventory()) {
+			//Choice creation for Item in cycle
+			loot.addChoice(new Choice("" + tempItem, () -> {
+				ArrayList<Item> inventory = getInventory().getInventory();
+
+				if (tempItem.isStackable()) {
+					System.out.println("How many would you like to take");
+					try{
+						int tempInt = Integer.parseInt(input.nextLine().strip());
+						getInventory().remove(tempItem, tempInt);
+						tempItem.setAmount(tempInt);
+						player.addItem(tempItem);
+					}
+					catch(Exception e) {
+						System.out.println("Invalid Input");
+						loot.displayEvent();
+					}
+				}
+				else {
+					player.addItem(tempItem);
+					inventory.remove(tempItem);
+				}
+				loot(player);
+			}));
+
+		}
+
+		if(inventory.getMoney() > 0) {
+			loot.addChoice(new Choice(inventory.getMoney() + " Coins", () -> {
+				player.getInventory().adjustMoney(inventory.getMoney());
+				inventory.setMoney(0);
+
+				loot(player);
+			}));
+		}
+
+		loot.addChoice(new Choice("Exit", () -> {}));
+
+		loot.displayEvent();
+	}
+	public void die(Player killer) {
 		killer.getStats().addXp(getStats().getXp().getStat());
 		getDeathEvent().displayEvent();
 	}

@@ -34,6 +34,23 @@ public class Player extends Character{
         }
     }
 
+    public int counterAttack(NPC enemy) {
+        int damage = inventory.getEquippedWeapon().attack();
+        if(damage > 0) {
+            int extra = rand.nextInt(stats.getStrength().getStat());
+
+            damage /= 2;
+            extra /=2;
+
+            System.out.println("You do " + damage + " + " + extra +  " damage to the " + enemy + ".");
+            return damage + extra;
+        }
+        else {
+            System.out.println("You miss!");
+            return 0;
+        }
+    }
+
     public void giveItem(NPC recipiant) {
         System.out.println(inventory + "What Item would you like to give to " + recipiant + "?\n9: Exit");
         int discardIndex = input.nextInt();
@@ -56,37 +73,44 @@ public class Player extends Character{
         }
     }
 
-    public boolean pickPocket(NPC victim) {
-        //TODO rewrite pickPocket
+    public void pickPocket(NPC victim) {
 
-         if(stats.rollDexterity(victim.getStats().getDexterity())) {
-          Event pickPocket = new Event("Select one item to steal" , false);
-          for(Item tempItem:victim.getInventory().getInventory()) {
-              pickPocket.addChoice(new Choice("" + tempItem, () -> {
-                  ArrayList<Item> inventory = victim.getInventory().getInventory();
-                  if(tempItem.isStackable()) {
-                      for(int i = 0; i < inventory.size(); i++) {
-                          if(tempItem.getName().equals(inventory.get(i).getName())) {
-                              inventory.get(i).adjustAmount(-1);
-                              addItem(tempItem);
-                          }
 
-                      }
-                  }
-                  else {
-                      addItem(tempItem);
-                      inventory.remove(tempItem);
-                  }
+        Event pickPocket = new Event("Select one item to steal", false);
 
-              }));
-          }
+        //Iterates through every item in npc inventory
+        for (Item tempItem : victim.getInventory().getInventory()) {
+            //Choice creation for Item in cycle
+            pickPocket.addChoice(new Choice("" + tempItem, () -> {
+                ArrayList<Item> inventory = victim.getInventory().getInventory();
 
-            return true;
+                if (tempItem.isStackable()) {
+                    for (int i = 0; i < inventory.size(); i++) {
+                        // If the Item is stackable then one item is removed from the npc and
+                        // the player gains one of that item
+                        if (tempItem.getName().equals(inventory.get(i).getName())) {
+                            inventory.get(i).adjustAmount(-1);
+                            tempItem.setAmount(1);
+                            addItem(tempItem);
+                        }
+
+                    }
+                } else {
+                    addItem(tempItem);
+                    inventory.remove(tempItem);
+                }
+            }));
         }
-        else {
-            System.out.println("PickPocket Failed");
-            return false;
-        }
+
+        pickPocket.addChoice(new Choice("Coins" , () -> {
+            System.out.println("You stole " + victim.getInventory().getMoney() + " coins from " + victim);
+            inventory.adjustMoney(victim.getInventory().getMoney());
+            victim.getInventory().setMoney(0);
+        }));
+
+        pickPocket.addChoice(new Choice("Exit", () -> {}));
+
+        pickPocket.displayEvent();
     }
 
     public Player() {

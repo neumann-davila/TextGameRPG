@@ -119,9 +119,20 @@ public class Event {
 			new CombatEvent(TextGame.player, npc);
 			if(npc.getHealth() < 0) {
 				removeNPC(npc);
+				npc.die(TextGame.player);
 			}
 		}));
-		//NPCChoices.add(new Choice("Pickpocket " + npc, () -> {npc.pickPocket(TextGame.player);TextGame.player.getStats().adjustFriendStat(friendStat, -20);}));
+		NPCChoices.add(new Choice("Pickpocket " + npc, () -> {
+			if(TextGame.player.getStats().rollDexterity(npc.getStats().getDexterity())) {
+				TextGame.player.pickPocket(npc);
+			}
+			else {
+				System.out.println("You were caught!");
+				TextGame.player.getStats().adjustFriendStat(friendStat, -20);
+
+			}
+
+		}));
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
 		for (int i = 1; i < NPCChoices.size() + 1;i++ ) {

@@ -30,14 +30,14 @@ public class Inventory {
     Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
 
 
-                    //  ---Equippable Items---  \\
+                            //  ---Equippable Items---  \\
     private Weapon equippedWeapon = new Weapon();
     private Armor equippedHelm;
     private Armor equippedChest;
     private Armor equippedLeg;
     private Armor equippedBoot;
 
-                        //  ---Money---  \\
+                                    //  ---Money---  \\
     private int money = 0;
 
                             //      ---Main Function Methods---     \\
@@ -122,7 +122,15 @@ public class Inventory {
                     try {
                         int tempInt = Integer.parseInt(input.nextLine().strip());
                         inventory.get(i).adjustAmount(-tempInt);
-                        displayInventory.addChoice(new Choice("" + item, () -> {interact(item);}));
+                        if(0 < inventory.get(i).getAmount()) {
+
+                            displayInventory.addChoice(new Choice("" + item, () -> {
+                                interact(item);
+                            }));
+                        }
+                        else {
+                            inventory.remove(i);
+                        }
                     }
                     catch(Exception e) {
                         System.out.println("Invalid Input");
@@ -131,6 +139,29 @@ public class Inventory {
                 }
                 break;
             }
+        }
+    }
+
+    public void remove(Item item, int amount) {
+        if(item.isStackable()) {
+            for (int i = 0; i < inventory.size(); i++) {
+                if (item.getName().equals(inventory.get(i).getName())) {
+                    inventory.get(i).adjustAmount(-amount);
+
+                    if(0 < inventory.get(i).getAmount()) {
+
+                        displayInventory.addChoice(new Choice("" + item, () -> {
+                            interact(item);
+                        }));
+                    }
+                    else {
+                        inventory.remove(i);
+                    }
+                }
+            }
+        }
+        else {
+            System.out.println("Cannot Remove nonStackable Item");
         }
     }
 
@@ -261,6 +292,30 @@ public class Inventory {
         }
         addItem(item);
     }
+    public void unequipAll() {
+        if(equippedWeapon != null) {
+            addItem(equippedWeapon);
+        }
+        if(equippedHelm != null) {
+            addItem(equippedHelm);
+        }
+        if(equippedChest != null) {
+            addItem(equippedChest);
+        }
+        if(equippedLeg != null) {
+            addItem(equippedLeg);
+        }
+        if(equippedBoot != null) {
+            addItem(equippedBoot);
+        }
+
+        equippedWeapon = null;
+        equippedHelm = null;
+        equippedChest = null;
+        equippedLeg = null;
+        equippedBoot = null;
+    }
+
     public void equipArmor(Armor newArmor) {
         if(newArmor.getArmorType() == 1) {
             equippedHelm = newArmor;
@@ -294,6 +349,10 @@ public class Inventory {
             adjustMoney(-(item.getPrice()));
             addItem(item);
         }
+    }
+
+    public int getMoney() {
+        return this.money;
     }
     public void setMoney(int money) {
         this.money = money;
