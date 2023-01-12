@@ -113,14 +113,13 @@ public class Event {
 		ArrayList<Choice> NPCChoices = new ArrayList<Choice>();
 		Stat friendStat = TextGame.player.getStats().getFriendStat(npc);
 		
-		NPCChoices.add(new Choice("Talk to " + npc, () -> {System.out.println(npc.getDialogue(friendStat));}));
+		NPCChoices.add(new Choice("Talk to " + npc, () -> {
+			System.out.println(npc.getDialogue(friendStat));
+		}));
+
 		NPCChoices.add(new Choice("Give something to " + npc, () -> {TextGame.player.giveItem(npc);}));
 		NPCChoices.add(new Choice("Attack " + npc, () -> {
 			new CombatEvent(TextGame.player, npc);
-			if(npc.getHealth() < 0) {
-				removeNPC(npc);
-				npc.die(TextGame.player);
-			}
 		}));
 		NPCChoices.add(new Choice("Pickpocket " + npc, () -> {
 			if(TextGame.player.getStats().rollDexterity(npc.getStats().getDexterity())) {

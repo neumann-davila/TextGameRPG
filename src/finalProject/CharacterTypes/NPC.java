@@ -46,19 +46,18 @@ public class NPC extends Character {
 		if(interactions < 3) {
 			TextGame.player.getStats().adjustFriendStat(friendStat, 5);
 			interactions++;
-			System.out.println("" + friendStat);
 		}
 		
 		int friendValue = friendStat.getStat();
 		
 		if(friendValue > 75) {
-			return positiveReacts.get(rand.nextInt(positiveReacts.size()));
+			return "\033[0;32m" + name + ":\033[0;33m \"" + positiveReacts.get(rand.nextInt(positiveReacts.size())) + "\" \033[0;33m";
 		}
 		else if(friendValue > 25) {
-			return neutralReacts.get(rand.nextInt(neutralReacts.size()));
+			return "\033[0;92m" + name + ":\033[0;33m \"" +neutralReacts.get(rand.nextInt(neutralReacts.size())) + "\" \033[0;33m";
 		}
 		else {
-			return negativeReacts.get(rand.nextInt(negativeReacts.size()));
+			return "\033[0;31m" + name + ":\033[0;33m \"" +negativeReacts.get(rand.nextInt(negativeReacts.size())) + "\" \033[0;33m";
 		}
 	}
 	

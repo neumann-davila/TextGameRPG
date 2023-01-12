@@ -17,7 +17,7 @@ public class Item {
 	protected int price;
 	protected boolean stackable = true;
 
-	// TODO make potions maybe armor or charm/amulet
+	// TODO make potions/ consumables
 	public String toString() {
 		if(amount > 1) {
 			return this.name + " x" + amount +

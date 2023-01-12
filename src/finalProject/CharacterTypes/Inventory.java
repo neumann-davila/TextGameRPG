@@ -108,7 +108,7 @@ public class Inventory {
     public void remove(Item item) {
 
         for (int i = 0; i < inventory.size(); i++) {
-            if (item.equals(inventory.get(i))) {
+            if (item.getName().equals(inventory.get(i).getName())) {
                 for (int j = 0; j < displayInventory.getChoices().size(); j++) {
                     if (("" + item).equals(displayInventory.getChoices().get(j).getDescription())) {
                         displayInventory.getChoices().remove(j);
@@ -146,9 +146,10 @@ public class Inventory {
         if(item.isStackable()) {
             for (int i = 0; i < inventory.size(); i++) {
                 if (item.getName().equals(inventory.get(i).getName())) {
-                    inventory.get(i).adjustAmount(-amount);
 
-                    if(0 < inventory.get(i).getAmount()) {
+                inventory.get(i).adjustAmount(-amount);
+
+                    if(1 < inventory.get(i).getAmount()) {
 
                         displayInventory.addChoice(new Choice("" + item, () -> {
                             interact(item);
@@ -217,7 +218,9 @@ public class Inventory {
     public void useItem(String itemName, int amount) {
         for(Item tempItem:inventory) {
             if(tempItem.getName().equals(itemName)) {
-                tempItem.adjustAmount(-amount);
+                Consumables item = (Consumables) tempItem;
+                item.use();
+
             }
         }
     }

@@ -73,7 +73,7 @@ public class CombatEvent {
             return;
         }
         else if(enemy.getHealth() <= 0) {
-            enemy.displayDeathEvent();
+            enemy.die(player);
             return;
         }
 
@@ -135,25 +135,41 @@ public class CombatEvent {
                 System.out.println("Dodge failed");
                 sleep(700);
                 int damage = npc.attack();
-                if(damage != 0) {
-                    System.out.println(" to " + player);
+
+                if(damage > 0) {
+                    int playerBlocked = player.getInventory().getArmorIncrease();
+                    //  determines blocked damage
+                    System.out.println(player + " blocked " + playerBlocked + " damage with their armor.");
+                    sleep(700);
+                    damage -= playerBlocked;
+                    if(damage > 0) {
+                        System.out.println(damage + " damage was done to " + player);
+
+                        player.adjustHealth(-damage);
+                    }
+                    else {
+                        System.out.println("All damage Blocked!");
+                    }
+                    sleep(700);
                 }
+
+
                 player.adjustHealth(-damage);
                 sleep(700);
             }
         }));
 
             // Counter-attack allows the player to attack but only dealing half of its possible damage
-        if(!(npc.getEquippedWeapon() instanceof RangedWeapon)) {
+        if(!(npc.getEquippedWeapon() instanceof RangedWeapon) || player.getEquippedWeapon() instanceof RangedWeapon) {
             counter.addChoice(new Choice("Counter attack", () -> {
-                    //  gets the amount damage that can be blocked
+                    //  Gets the amount damage that can be blocked from both entities
                 int blocked = npc.getInventory().getArmorIncrease();
                 int playerBlocked = player.getInventory().getArmorIncrease();
 
                 System.out.println(player + " counter attacked!");
                 sleep(700);
 
-
+                    //  finalizes counter attack and blocked damage
                 int counterDamage = player.counterAttack(npc) - blocked;
                 System.out.println(npc + " blocked " + blocked + " damage with their armor.");
                 sleep(700);
@@ -161,15 +177,23 @@ public class CombatEvent {
                     npc.adjustHealth(-counterDamage);
                 }
 
-                int damage = npc.attack() - playerBlocked;
+                    //  takes npc damage to player
+                int damage = npc.attack();
 
                 if(damage > 0) {
-                    System.out.println(player + " blocked " + blocked + " damage with their armor.");
-                    System.out.println(damage + " was done to " + player);
+                    //  determines blocked damage
+                    System.out.println(player + " blocked " + playerBlocked + " damage with their armor.");
+                    damage -= playerBlocked;
+                    if(damage > 0) {
+                        System.out.println(damage + " was done to " + player);
+                        player.adjustHealth(-damage);
+                    }
+                    else {
+                        System.out.println("All damage Blocked!");
+                    }
                 }
 
                 System.out.println("");
-                player.adjustHealth(-damage);
             }));
         }
 
@@ -182,7 +206,7 @@ public class CombatEvent {
             return;
         }
         else if(npc.getHealth() <= 0) {
-            npc.displayDeathEvent();
+            npc.die(player);
             return;
         }
 
@@ -192,7 +216,6 @@ public class CombatEvent {
         playerCounter(npc);
         playerCombatTurn(npc);
     }
-    //TODO armor decrease not added everywhere
     public void npcCounter(NPC npc, Character enemy, int damage) {
         int damageBlocked = npc.getInventory().getArmorIncrease();
         int damageTaken = damage - damageBlocked;

@@ -66,12 +66,12 @@ public class TextGame {
 		
 		player.getStats().getFriendStat(oldMan).setStat(80);
 		
-		oldMan.addDialogue("I love you", 1);
+		oldMan.addDialogue("Yer such a nice youn' lad", 1);
 		
-		oldMan.addDialogue("Hello young whipper snapper", 0);
-		oldMan.addDialogue("...Oh did you say something", 0);
+		oldMan.addDialogue("'ello youn' whipper snapper", 0);
+		oldMan.addDialogue("...Sorry didn' hear yeh", 0);
 		
-		oldMan.addDialogue("I hate you", -1);
+		oldMan.addDialogue("GET ER WAY FROM ME", -1);
 		
 		Event death = new Event("You see the corpse of the man you just killed\nWhat wold you like to do", false);
 		death.addChoice(new Choice("Loot Body", () -> {oldMan.loot(player); death.displayEvent();}));
@@ -185,6 +185,8 @@ public class TextGame {
 		createPlayer();
 
 		createPrisonWall();
+
+		System.out.println("That is all that I have created.\nThank you for playing!");
 	}
 	
 	public static void main (String[] args) {
