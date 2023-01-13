@@ -26,7 +26,7 @@ public class Choice {
 		if(outcomeDescription != null) {
 			System.out.println("\033[93m" + outcomeDescription);
 			try{
-				Thread.sleep(700);
+				Thread.sleep(1500);
 			}
 			catch(Exception e) {
 				System.out.println(e);

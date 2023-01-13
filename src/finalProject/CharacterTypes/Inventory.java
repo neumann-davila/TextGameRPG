@@ -5,7 +5,7 @@
  *
  * This object stores Item objects for the player or NPC so that I can keep track of
  * what the Character has on their person. This also manages money weapons, and armor that
- * linked to the character
+ * are linked to the character
  *
  */
 
@@ -13,6 +13,7 @@ package finalProject.CharacterTypes;
 
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
+import finalProject.Info;
 import finalProject.Items.*;
 import finalProject.Items.Consumable.Consumables;
 import finalProject.Items.Weapons.Weapon;
@@ -110,31 +111,27 @@ public class Inventory {
         Event info = new Event("What item type do you want more info on?", false);
 
         info.addChoice(new Choice("Melee Weapons", () -> {
-            System.out.println("\033[0;94mMelee Weapons are Weapons used in close combat.");
-            pause();
-            System.out.println("These Weapons tend to do more damage than ranged weapons, but they are unable to counter attack against enemies using ranged weapons");
-            pause();
+            Info meleeWeapon = new Info(new String[]{   "Melee Weapons are Weapons used in close combat.",
+                                                        "These Weapons tend to do more damage than ranged weapons, but they are unable to counter attack against enemies using ranged weapons"});
+            meleeWeapon.display();
         }));
 
         info.addChoice(new Choice("Ranged Weapons", () -> {
-            System.out.println("\033[0;94mRanged Weapons are Weapons used in ranged combat.");
-            pause();
-            System.out.println("These Weapons tend to do less damage than melee weapons, but are always able to counter attack enemies in combat");
-            pause();
+            Info rangedWeapon = new Info(new String[] { "Ranged Weapons are Weapons used in ranged combat.",
+                                                        "These Weapons tend to do less damage than melee weapons, but are always able to counter attack enemies in combat"});
+            rangedWeapon.display();
         }));
 
         info.addChoice(new Choice("Armor", () -> {
-            System.out.println("\033[0;94mIn combat Armor has a chance to negate damage");
-            pause();
-            System.out.println("This is done with your defense stat and a bit of rng");
-            pause();
+            Info armor = new Info(new String[]{ "In combat Armor has a chance to negate damage",
+                                                "This is done with your defense stat and a bit of rng"});
+           armor.display();
         }));
 
         info.addChoice(new Choice("Consumables", () -> {
-            System.out.println("\033[0;94mConsumable Items can be used inside and outside of combat");
-            pause();
-            System.out.println("These items usually will have a description on their effect and once they are used there is no getting it back");
-            pause();
+            Info consumables = new Info(new String[]{   "Consumable Items can be used inside and outside of combat",
+                                                        "These items usually will have a description on their effect and once they are used there is no getting it back"});
+            consumables.display();
         }));
     }
     public Item getItem(int index) {

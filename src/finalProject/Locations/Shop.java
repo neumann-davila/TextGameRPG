@@ -52,6 +52,35 @@ public class Shop extends Location{
 		
 		shop.displayEvent();
 	}
+	public void sell() {
+		Event sell = new Event("What would you like to sell?", false);
+
+		for(Item tempItem : TextGame.player.getInventory().getInventory()) {
+			sell.addChoice(new Choice("" + tempItem, () -> {
+				if (!tempItem.isStackable()) {
+					TextGame.player.getInventory().adjustMoney(tempItem.getPrice());
+					TextGame.player.getInventory().remove(tempItem);
+					return;
+				}
+
+				System.out.println("How many would you like to sell?");
+
+				try {
+					int tempInt = Integer.parseInt(input.nextLine().strip());
+					if (tempInt > tempItem.getAmount()) {
+						System.out.println("You do not have " + tempInt + " of that item");
+						sell.displayEvent();
+					} else {
+						TextGame.player.getInventory().adjustMoney(tempInt * tempItem.getPrice());
+						TextGame.player.getInventory().remove(tempItem, tempInt);
+					}
+
+				} catch (Exception e) {
+					System.out.println("Invalid Input");
+				}
+			}));
+		}
+	}
 
 	@Override
 	public void setNearbyLocations(Choice[] nearbyLocations) {
@@ -80,7 +109,12 @@ public class Shop extends Location{
 		super(shopName);
 		this.shop = new Event("You enter " + shopName);
 		shop.addChoice(new Choice("Buy", () -> {displayShop();}));
-		shop.addChoice(new Choice("Sell", () -> {}));
+		shop.addChoice(new Choice("Sell", () -> {sell();}));
+		shop.addChoice(new Choice("Info", () -> {
+			System.out.println("");
+		}));
 	}
 }
+
+
 

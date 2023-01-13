@@ -20,6 +20,7 @@ package finalProject.EventStructure;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import finalProject.Info;
 import finalProject.Items.Item;
 import finalProject.TextGame;
 import finalProject.CharacterTypes.*;
@@ -44,6 +45,7 @@ public class Event {
 		//	automatically runs if there is only one choice in the Event
 		if (eventChoices.size() == 1) {
 			System.out.println(description);
+			sleep(1500);
 			eventChoices.get(0).choiceRun();
 		} else {
 			//	If the event has default choices then it will run starting at 0
@@ -86,7 +88,6 @@ public class Event {
 	public void addNPC(NPC npc, Boolean isDead) {
 		if(!isDead) {
 			addChoice(new Choice("Interact with " + npc, () -> {NPCEvent(npc);displayEvent();}));
-
 		}
 		eventNPC.add(npc);
 	}
@@ -114,8 +115,11 @@ public class Event {
 		//	Events that are created when an NPC is interacted with
 	public void NPCEvent(NPC npc) {
 		ArrayList<Choice> NPCChoices = new ArrayList<Choice>();
+
+			// Friend Stat determines how the npc may interact with the player
 		Stat friendStat = TextGame.player.getStats().getFriendStat(npc);
-		
+
+			// Each interaction will adjust the friend stat in some way, some more than others
 		NPCChoices.add(new Choice("Talk to " + npc, () -> {
 			System.out.println(npc.getDialogue(friendStat));
 		}));
@@ -138,11 +142,17 @@ public class Event {
 			}
 
 		}));
+		NPCChoices.add(new Choice("Info", () -> {
+			Info info = new Info(new String[] {	"In this game NPC's are linked to a friend stat.",
+												"Although these stats are not completely visible an NPC's interactions with you may change based on your level of friendship."});
+			info.display();
+			NPCEvent(npc);
+		}));
 		NPCChoices.add(new Choice("Back", () -> {}));
 		
 		for (int i = 1; i < NPCChoices.size() + 1;i++ ) {
 			sleep(300);
-			System.out.println(i + ": " + NPCChoices.get(i - 1));
+			System.out.println("\033[0;37m" + i + ":\033[93m " + NPCChoices.get(i - 1));
 		}
 		
 		try {

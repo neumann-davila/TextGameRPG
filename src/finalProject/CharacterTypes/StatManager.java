@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import finalProject.Info;
 import finalProject.TextGame;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
@@ -46,19 +47,20 @@ public class StatManager {
 	private Stat xp = new Stat("Experience Points");
 	private int level;
 	private int totalStatPoints;
+	private Info info = new Info(new String[]{	"The stat system is a very simple system\n",
+												"The Strength Stat is used mainly in combat but has the potential to be used outside of combat as well.",
+												"In combat your base Health is 20, but for each point you add to strength a point will be added to your health.",
+												"Strength also gives you rng based bonus damage in combat.",
+												"Strength may also be used when interacting with random objects within the game.\nExample: Lifting something heavy.\n",
+												"The Dexterity Stat is used both in and outside of combat.",
+												"In combat your dexterity score is used to determine who is starting in the combat cycle as well as your ability to run from your enemy.",
+												"Outside of combat Dexterity relates to any action that involves precise and complex movements.\nExample: Pickpocketing\n",
+												"The Charisma stat is exclusively used outside of combat in NPC interactions.",
+												"Charisma can be highly useful in persuading NPC's as well as increasing your general friendship with the NPC."});
 
 
 	public String toString() {
 		return "\033[0;92m		" + strength + "\n		" + dexterity + "\n		" + charisma + "\n";
-	}
-
-	public void pause() {
-		try {
-			Thread.sleep(2000);
-		}
-		catch(Exception e) {
-
-		}
 	}
 	
 	public void clearStats() {
@@ -87,32 +89,11 @@ public class StatManager {
 			setStats.addChoice(new Choice("" + dexterity, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {dexterity.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
 			setStats.addChoice(new Choice("" + charisma, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {charisma.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
 			setStats.addChoice(new Choice("Reset to previous stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);}));
-			setStats.addChoice(new Choice("Info", () -> {
-				System.out.println("\033[0;94mThe stat system is a very simple system");
-				pause();
-				System.out.println("\nThe Strength Stat is used mainly in combat but has the potential to be used outside of combat as well.");
-				pause();
-				System.out.println("In combat your base Health is 20, but for each point you add to strength a point will be added to your health.");
-				pause();
-				System.out.println("Strength also gives you rng based bonus damage in combat.");
-				pause();
-				System.out.println("Strength may also be used when interacting with random objects within the game.\nExample: Lifting something heavy.");
-				pause();
-				System.out.println("\nThe Dexterity Stat is used both in and outside of combat.");
-				pause();
-				System.out.println("In combat your dexterity score is used to determine who is starting in the combat cycle as well as your ability to run from your enemy.");
-				pause();
-				System.out.println("Outside of combat Dexterity relates to any action that involves precise and complex movements.\nExample: Pickpocketing");
-				pause();
-				System.out.println("\nThe Charisma stat is exclusively used outside of combat in NPC interactions.");
-				pause();
-				System.out.println("Charisma can be highly useful in persuading NPC's as well as increasing your general friendship with the NPC.");
-				pause();
-			}));
+			setStats.addChoice(new Choice("Info", () -> {info.display();}));
 
 			setStats.displayEvent();
 		}
-		Event confirmStats = new Event("Are these the stats you wish to keep?\n" + toString(), false);
+		Event confirmStats = new Event("Are these the stats you wish to keep?\n" + this, false);
 		
 		confirmStats.addChoice(new Choice("Confirm Stats", () -> {TextGame.player.adjustMaxHealth(strength.getStat() - tempStr);}));
 		confirmStats.addChoice(new Choice("Reset Stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);setStats();}));
