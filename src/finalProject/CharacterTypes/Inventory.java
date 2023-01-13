@@ -27,8 +27,9 @@ public class Inventory {
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
     private Event displayInventory = new Event("What would you like to do in your inventory", false);
-    Choice exit = new Choice("Exit","Exiting Inventory",  () -> {});
-    Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
+    private Choice exit = new Choice("Exit","Exiting Inventory",  () -> {});
+    private Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
+    private Choice info = new Choice("Info", () -> {info();});
 
 
                             //  ---Equippable Items---  \\
@@ -84,6 +85,7 @@ public class Inventory {
     public void display() {
         displayInventory.addChoice(exit);
         displayInventory.addChoice(unequip);
+        displayInventory.addChoice(info);
 
         System.out.println( "\033[0;32mEquipped Helmet \033[0;93m\n" + equippedHelm);
         pause();
@@ -101,6 +103,39 @@ public class Inventory {
 
         displayInventory.removeChoice(unequip);
         displayInventory.removeChoice(exit);
+        displayInventory.removeChoice(info);
+    }
+
+    private void info() {
+        Event info = new Event("What item type do you want more info on?", false);
+
+        info.addChoice(new Choice("Melee Weapons", () -> {
+            System.out.println("\033[0;94mMelee Weapons are Weapons used in close combat.");
+            pause();
+            System.out.println("These Weapons tend to do more damage than ranged weapons, but they are unable to counter attack against enemies using ranged weapons");
+            pause();
+        }));
+
+        info.addChoice(new Choice("Ranged Weapons", () -> {
+            System.out.println("\033[0;94mRanged Weapons are Weapons used in ranged combat.");
+            pause();
+            System.out.println("These Weapons tend to do less damage than melee weapons, but are always able to counter attack enemies in combat");
+            pause();
+        }));
+
+        info.addChoice(new Choice("Armor", () -> {
+            System.out.println("\033[0;94mIn combat Armor has a chance to negate damage");
+            pause();
+            System.out.println("This is done with your defense stat and a bit of rng");
+            pause();
+        }));
+
+        info.addChoice(new Choice("Consumables", () -> {
+            System.out.println("\033[0;94mConsumable Items can be used inside and outside of combat");
+            pause();
+            System.out.println("These items usually will have a description on their effect and once they are used there is no getting it back");
+            pause();
+        }));
     }
     public Item getItem(int index) {
         return inventory.get(index);
@@ -375,7 +410,7 @@ public class Inventory {
 
     private void pause() {
         try{
-            Thread.sleep(700);
+            Thread.sleep(1500);
         }
         catch(Exception e) {
 

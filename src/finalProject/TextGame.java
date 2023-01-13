@@ -13,7 +13,6 @@ package finalProject;
 import java.util.Scanner;
 
 import finalProject.CharacterTypes.*;
-import finalProject.CharacterTypes.Character;
 import finalProject.EventStructure.*;
 import finalProject.Items.*;
 import finalProject.Items.Weapons.Weapon;
@@ -216,12 +215,12 @@ public class TextGame {
 		test.displayEvent();
 
 		pause();
-		System.out.println( "There are many more things to understand in this game, but this is the most basic mechanic of this game.\n" +
+		System.out.println( "\033[0;94mThere are many more things to understand in this game, but this is the most basic mechanic of this game.\n" +
 							"Have fun!");
 		pause();
 	}
 	public static void main (String[] args){
-		System.out.println("Welcome to NAME_TBD\nPress enter to start");
+		System.out.println("\033[0;94mWelcome to NAME_TBD\nPress enter to start");
 		input.nextLine();
 		tutorial();
 
