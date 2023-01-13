@@ -24,6 +24,15 @@ public class TextGame {
 		//	Main Player declaration
 	public static Player player =  new Player();
 
+	public static void pause() {
+		try{
+			Thread.sleep(700);
+		}
+		catch(Exception e ) {
+
+		}
+	}
+
 		/*
 		 * 						---Needed Constructors---
 		 *
@@ -57,7 +66,8 @@ public class TextGame {
 		 * 		- All Items must be added within the function
 		 * 		
 		 */
-		
+
+	public static boolean oldManDead = false;
 	public static NPC createOldMan() {
 		NPC oldMan = new NPC("Old man", 6, 20);
 
@@ -75,7 +85,7 @@ public class TextGame {
 		
 		Event death = new Event("You see the corpse of the man you just killed\nWhat wold you like to do", false);
 		death.addChoice(new Choice("Loot Body", () -> {oldMan.loot(player); death.displayEvent();}));
-		death.addChoice(new Choice("Leave", () -> {}));
+		death.addChoice(new Choice("Leave", () -> {oldManDead = true;}));
 		oldMan.setDeathEvent(death);
 				
 		return oldMan;
@@ -128,7 +138,7 @@ public class TextGame {
 
 	public static Location createForest() {
 		Location forest =  new Location();
-		Choice[] nearbyLocations = {goTo("Prison Wall", () -> {createPrisonWall();}), goTo("Tavern", () -> {createTavern();})};
+		Choice[] nearbyLocations = {goTo("Tavern", () -> {createTavern();})};
 		
 			//	Event Index 0
 		Event enterCampsite = new Event("As you get deeper into the forest you find a campsite that was abandoned long ago.\n" +
@@ -145,7 +155,7 @@ public class TextGame {
 		forest.addEvent(getWeapon);
 			//	Event Index 2
 		Event test = new Event("test");
-		test.addNPC(createOldMan());
+		test.addNPC(createOldMan(), oldManDead);
 		
 		forest.addEvent(test);
 		
@@ -188,8 +198,33 @@ public class TextGame {
 
 		System.out.println("That is all that I have created.\nThank you for playing!");
 	}
-	
-	public static void main (String[] args) {
+
+	public static void tutorial() {
+		System.out.println("If you are new to the game press enter to play the tutorial or type any character and press enter");
+
+		if(!input.nextLine().equals("")) {
+			return;
+		}
+
+		System.out.println("This is a Text Adventure Game that uses numbered choices to progress the game");
+		pause();
+		Event test = new Event("This is the basic Structure for an event\nSelect one of the choices by typing a number and the clicking enter", false);
+
+		test.addChoice(new Choice("Continue","Continuing ",  () -> {}));
+		test.addChoice(new Choice("Proceed","Proceeding",  () -> {}));
+
+		test.displayEvent();
+
+		pause();
+		System.out.println( "There are many more things to understand in this game, but this is the most basic mechanic of this game.\n" +
+							"Have fun!");
+		pause();
+	}
+	public static void main (String[] args){
+		System.out.println("Welcome to NAME_TBD\nPress enter to start");
+		input.nextLine();
+		tutorial();
+
 		run();
 	}
 	

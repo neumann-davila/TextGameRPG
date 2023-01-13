@@ -59,7 +59,6 @@ import finalProject.CharacterTypes.*;
 import finalProject.CharacterTypes.Character;
 import finalProject.Items.Weapons.RangedWeapon;
 
-import java.util.Locale;
 
 
 public class CombatEvent {
@@ -179,6 +178,7 @@ public class CombatEvent {
 
                     //  takes npc damage to player
                 int damage = npc.attack();
+                sleep(700);
 
                 if(damage > 0) {
                     //  determines blocked damage
@@ -192,7 +192,7 @@ public class CombatEvent {
                         System.out.println("All damage Blocked!");
                     }
                 }
-
+                sleep(700);
                 System.out.println("");
             }));
         }

@@ -14,6 +14,7 @@ package finalProject.CharacterTypes;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Items.*;
+import finalProject.Items.Consumable.Consumables;
 import finalProject.Items.Weapons.Weapon;
 
 import java.util.ArrayList;
@@ -84,12 +85,17 @@ public class Inventory {
         displayInventory.addChoice(exit);
         displayInventory.addChoice(unequip);
 
-        System.out.println( "\033[0;32mEquipped Helmet \033[0;93m\n" + equippedHelm +
-                            "\n\033[0;32mEquipped Chestplate \033[0;93m\n" + equippedChest +
-                            "\n\033[0;32mEquipped Leggings \033[0;93m\n" + equippedLeg +
-                            "\n\033[0;32mEquipped Boots \033[0;93m\n" + equippedBoot +
-                            "\n\033[0;32mEquipped Weapon \033[0;93m\n" + equippedWeapon +
-                            "\n\033[0;32mCoins: \033[0;93m" + money);
+        System.out.println( "\033[0;32mEquipped Helmet \033[0;93m\n" + equippedHelm);
+        pause();
+        System.out.println( "\n\033[0;32mEquipped Chestplate \033[0;93m\n" + equippedChest);
+        pause();
+        System.out.println( "\n\033[0;32mEquipped Leggings \033[0;93m\n" + equippedLeg);
+        pause();
+        System.out.println( "\n\033[0;32mEquipped Boots \033[0;93m\n" + equippedBoot);
+        pause();
+        System.out.println( "\n\033[0;32mEquipped Weapon \033[0;93m\n" + equippedWeapon);
+        pause();
+        System.out.println( "\n\033[0;32mCoins: \033[0;93m" + money);
 
         displayInventory.displayEvent();
 
@@ -363,6 +369,17 @@ public class Inventory {
 
     public void adjustMoney(int money) {
         this.money += money;
+    }
+
+                            //      ---MISC---      \\
+
+    private void pause() {
+        try{
+            Thread.sleep(700);
+        }
+        catch(Exception e) {
+
+        }
     }
 
     public Inventory() {

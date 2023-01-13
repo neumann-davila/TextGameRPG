@@ -83,8 +83,11 @@ public class Event {
 	
 								//	---NPC Methods---	\\
 	
-	public void addNPC(NPC npc) {
-		addChoice(new Choice("Interact with " + npc, () -> {NPCEvent(npc);displayEvent();}));
+	public void addNPC(NPC npc, Boolean isDead) {
+		if(!isDead) {
+			addChoice(new Choice("Interact with " + npc, () -> {NPCEvent(npc);displayEvent();}));
+
+		}
 		eventNPC.add(npc);
 	}
 	
@@ -120,6 +123,9 @@ public class Event {
 		NPCChoices.add(new Choice("Give something to " + npc, () -> {TextGame.player.giveItem(npc);}));
 		NPCChoices.add(new Choice("Attack " + npc, () -> {
 			new CombatEvent(TextGame.player, npc);
+			if(npc.getHealth() < 1) {
+				removeNPC(npc);
+			}
 		}));
 		NPCChoices.add(new Choice("Pickpocket " + npc, () -> {
 			if(TextGame.player.getStats().rollDexterity(npc.getStats().getDexterity())) {
@@ -217,7 +223,6 @@ public class Event {
 	public Event() {
 		this.description += "test \033[0m";
 		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
-		addNPC(new NPC());
 	}
 	
 	public Event(String description) {

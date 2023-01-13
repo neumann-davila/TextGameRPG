@@ -81,7 +81,7 @@ public class NPC extends Character {
 		int damage = inventory.getEquippedWeapon().attack();
 		if(damage > 0) {
 			int extra = rand.nextInt(stats.getStrength().getStat());
-			System.out.print(name + " did " + damage + " + " + extra + " damage");
+			System.out.println(name + " did " + damage + " + " + extra + " damage");
 			return (damage + extra);
 		}
 		else {

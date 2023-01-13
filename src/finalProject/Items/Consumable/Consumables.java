@@ -5,14 +5,15 @@
  *
  *
  */
-package finalProject.Items;
+package finalProject.Items.Consumable;
 
 import finalProject.EventStructure.Consequence;
+import finalProject.Items.Item;
 
 public class Consumables extends Item {
-    private Consequence outcome;
-    String name;
-    String description;
+    protected Consequence outcome;
+    protected String name;
+    protected String description;
 
     @Override
     public String toString() {
