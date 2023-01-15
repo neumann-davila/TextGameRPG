@@ -27,7 +27,7 @@ public class Inventory {
     private Scanner input = new Scanner(System.in);
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
-    private Event displayInventory = new Event("What would you like to do in your inventory", false);
+    private Event displayInventory = new Event(new String[] {"What would you like to do in your inventory"}, false);
     private Choice exit = new Choice("Exit","Exiting Inventory",  () -> {});
     private Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
     private Choice info = new Choice("Info", () -> {info();});
@@ -53,7 +53,7 @@ public class Inventory {
     }
 
     public void interact(Item newItem) {
-        Event interact = new Event("What would you like to do with " + newItem, false);
+        Event interact = new Event(new String[] {"What would you like to do with " + newItem}, false);
                 //  Creates discard method
 
         interact.addChoice(new Choice("Discard",() -> {remove(newItem);displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
@@ -89,15 +89,15 @@ public class Inventory {
         displayInventory.addChoice(info);
 
         System.out.println( "\033[0;32mEquipped Helmet \033[0;93m\n" + equippedHelm);
-        pause();
+        sleep(300);
         System.out.println( "\n\033[0;32mEquipped Chestplate \033[0;93m\n" + equippedChest);
-        pause();
+        sleep(300);
         System.out.println( "\n\033[0;32mEquipped Leggings \033[0;93m\n" + equippedLeg);
-        pause();
+        sleep(300);
         System.out.println( "\n\033[0;32mEquipped Boots \033[0;93m\n" + equippedBoot);
-        pause();
+        sleep(300);
         System.out.println( "\n\033[0;32mEquipped Weapon \033[0;93m\n" + equippedWeapon);
-        pause();
+        sleep(300);
         System.out.println( "\n\033[0;32mCoins: \033[0;93m" + money);
 
         displayInventory.displayEvent();
@@ -108,7 +108,7 @@ public class Inventory {
     }
 
     private void info() {
-        Event info = new Event("What item type do you want more info on?", false);
+        Event info = new Event(new String[] {"What item type do you want more info on?"}, false);
 
         info.addChoice(new Choice("Melee Weapons", () -> {
             Info meleeWeapon = new Info(new String[]{   "Melee Weapons are Weapons used in close combat.",
@@ -253,14 +253,24 @@ public class Inventory {
         }
     }
 
-    public void useItem(String itemName, int amount) {
-        for(Item tempItem:inventory) {
-            if(tempItem.getName().equals(itemName)) {
-                Consumables item = (Consumables) tempItem;
-                item.use();
-
+    public boolean useItem(String itemName, int amount) {
+            for(Item tempItem:inventory) {
+                if(tempItem.getName().equals(itemName)) {
+                    if(tempItem.getAmount() >= amount) {
+                        remove(tempItem, amount);
+                        pause();
+                        return true;
+                    }
+                    else{
+                        System.out.println("You do not have enough of that Item");
+                        pause();
+                        return false;
+                    }
+                }
             }
-        }
+            System.out.println("You do not have that Item");
+            pause();
+            return false;
     }
 
     public ArrayList<Item> getInventory() {
@@ -292,7 +302,7 @@ public class Inventory {
         return finalIncrease;
     }
     public void unequipEvent() {
-        Event unequip = new Event("What item do you want to unequip");
+        Event unequip = new Event(new String[] {"What item do you want to unequip"});
         if (equippedWeapon != null){
            unequip.addChoice(new Choice("Unequip " + equippedWeapon, () -> {unequip(equippedWeapon);}));
         }
@@ -406,8 +416,12 @@ public class Inventory {
                             //      ---MISC---      \\
 
     private void pause() {
+        sleep(1500);
+    }
+
+    private void sleep(long secs) {
         try{
-            Thread.sleep(1500);
+            Thread.sleep(secs);
         }
         catch(Exception e) {
 

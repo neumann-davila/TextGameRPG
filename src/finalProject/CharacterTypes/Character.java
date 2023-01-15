@@ -103,8 +103,54 @@ public class Character {
 	public Weapon getEquippedWeapon() {
 		return inventory.getEquippedWeapon();
 	}
-	public void removeItem(int index) {
-			inventory.removeItem(index -1);
+
+		// I know this is bad programming but I got lazy and i just wanted to finish, maybe fix later
+	public boolean useItem(String itemName, int amount) {
+		System.out.println("\033[0;96mThis action Requires " + amount + " " + itemName);
+		try{
+			Thread.sleep(1500);
+		}
+		catch(Exception e) {
+
+		}
+		System.out.println("Are you sure you want to use these items?");
+		try{
+			Thread.sleep(300);
+		}
+		catch(Exception e) {
+
+		}
+		System.out.println("\033[0;37m1:\033[93m Yes");
+		try{
+			Thread.sleep(300);
+		}
+		catch(Exception e) {
+
+		}
+		System.out.println("\033[0;37m2:\033[93m No");
+
+		try {
+			int tempInt = Integer.parseInt(input.nextLine().strip());
+			if(tempInt == 1) {
+				if(inventory.useItem(itemName, amount)) {
+					return true;
+				}
+			}
+			else if (tempInt == 2){
+				return false;
+			}
+			else {
+				System.out.println("Invalid Input");
+				useItem(itemName, amount);
+			}
+
+		}
+		catch(Exception e){
+			System.out.println("Invalid input: Use");
+			useItem(itemName, amount);
+		}
+
+		return false;
 	}
 
 	public void addItem(Item item) {

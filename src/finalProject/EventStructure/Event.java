@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import finalProject.Info;
-import finalProject.Items.Item;
 import finalProject.TextGame;
 import finalProject.CharacterTypes.*;
 import finalProject.CharacterTypes.Character;
@@ -29,7 +28,7 @@ import finalProject.CharacterTypes.Character;
 public class Event {
 	private Scanner input = new Scanner(System.in);
 	
-	private String description = "\033[0;96m";;
+	private String[] description;
 	private ArrayList<Choice> eventChoices = new ArrayList<Choice>();
 	private ArrayList<Character> eventNPC = new ArrayList<Character>();
 	private boolean isDefault = true;
@@ -44,14 +43,13 @@ public class Event {
 	public void displayEvent() {
 		//	automatically runs if there is only one choice in the Event
 		if (eventChoices.size() == 1) {
-			System.out.println(description);
-			sleep(1500);
+			dynamicPrint(description);
+			System.out.println("");
 			eventChoices.get(0).choiceRun();
 		} else {
 			//	If the event has default choices then it will run starting at 0
 			if (isDefault) {
-				System.out.printf(description);
-				System.out.println("");
+				dynamicPrint(description);
 				sleep(300);
 
 				for (int i = 0; i < eventChoices.size(); i++) {
@@ -70,7 +68,7 @@ public class Event {
 			//	Choices will be run stating at 1 for ease of use
 			//	only if default choices are not being used
 			else {
-				System.out.println(description);
+				dynamicPrint(description);
 				sleep(300);
 
 				for (int i = 1; i < eventChoices.size() + 1; i++) {
@@ -190,34 +188,12 @@ public class Event {
 		}	
 	}
 
-	private void slowText(String text) {
 
-		for(int i = 0; i < text.length(); i++) {
-			if(text.substring(i, i + 1).equals(" ")) {
-				System.out.print(text.charAt(i));
-				continue;
-			}
-			else if(text.substring(i, i + 1).equals("\n")) {
-				System.out.print(text.charAt(i));
-
-				try{
-					Thread.sleep(500);
-				}
-				catch(Exception e) {
-					System.out.println(e);
-				}
-				continue;
-			}
-
-			System.out.print(text.charAt(i));
-			try{
-				Thread.sleep(40);
-			}
-			catch(Exception e) {
-				System.out.println(e);
-			}
+	private void dynamicPrint(String[] texts) {
+		for(int i = 0; i < texts.length; i++) {
+			System.out.println("\033[0;96m" + texts[i]);
+			sleep(1500);
 		}
-		System.out.println("");
 	}
 
 	private void sleep(long milliSecs) {
@@ -231,17 +207,16 @@ public class Event {
 									//	---Constructors---	\\
 	
 	public Event() {
-		this.description += "test \033[0m";
-		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
+		eventChoices.add(new Choice("Open Backpack", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 	
-	public Event(String description) {
-		this.description += description + "\033[0m";
+	public Event(String[] description) {
+		this.description = description;
 		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 		//	Special Constructor for events without default choice like Display Inventory
-	public Event(String description, boolean containsDefaultChoices) {
-		this.description += description + "\033[0m";
+	public Event(String[] description, boolean containsDefaultChoices) {
+		this.description = description;
 		this.isDefault = containsDefaultChoices;
 	}
 

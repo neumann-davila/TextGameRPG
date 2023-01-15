@@ -30,7 +30,7 @@ public class Shop extends Location{
 		for (Item tempItem:forSale) {
 			tempItem.setAmount(1);
 		}
-		Event displayShop = new Event("What would you like to buy?");
+		Event displayShop = new Event(new String[] {"What would you like to buy?"});
 		for(Item tempItem: forSale) {
 			displayShop.addChoice(new Choice("" + tempItem, () -> {
 				if(tempItem.isStackable()) {
@@ -53,7 +53,7 @@ public class Shop extends Location{
 		shop.displayEvent();
 	}
 	public void sell() {
-		Event sell = new Event("What would you like to sell?", false);
+		Event sell = new Event(new String[] {"What would you like to sell?"}, false);
 
 		for(Item tempItem : TextGame.player.getInventory().getInventory()) {
 			sell.addChoice(new Choice("" + tempItem, () -> {
@@ -107,7 +107,7 @@ public class Shop extends Location{
 
 	public Shop(String shopName) {
 		super(shopName);
-		this.shop = new Event("You enter " + shopName);
+		this.shop = new Event(new String[] {"You enter " + shopName});
 		shop.addChoice(new Choice("Buy", () -> {displayShop();}));
 		shop.addChoice(new Choice("Sell", () -> {sell();}));
 		shop.addChoice(new Choice("Info", () -> {

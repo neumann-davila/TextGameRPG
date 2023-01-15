@@ -36,7 +36,7 @@ public class TextGame {
 		 * 						---Needed Constructors---
 		 *
 		 *
-		 * Item name = new Item("Name", int price, (optional) int amount);
+		 * Item name = new Item("Name",(optional) int amount, int price);
 		 * 		- Creates Basic Items with no real immediately usable function
 		 *
 		 * Weapon name = new Weapon("Name", int minDamage, int maxDamage, int hit%, int price);
@@ -82,7 +82,7 @@ public class TextGame {
 		
 		oldMan.addDialogue("GET ER WAY FROM ME", -1);
 		
-		Event death = new Event("You see the corpse of the man you just killed\nWhat wold you like to do", false);
+		Event death = new Event(new String[] {"You see the corpse of the man you just killed","What wold you like to do"}, false);
 		death.addChoice(new Choice("Loot Body", () -> {oldMan.loot(player); death.displayEvent();}));
 		death.addChoice(new Choice("Leave", () -> {oldManDead = true;}));
 		oldMan.setDeathEvent(death);
@@ -117,14 +117,14 @@ public class TextGame {
 
 	static int prisonWallIndex = 0;
 
-	public static Location createPrisonWall() {
+	public static Location createPrisonWall(int index) {
 		Location prisonWall = new Location();
+		prisonWallIndex = index;
 		
-		Event escape = new Event("You finally got over the wall unnoticed... for now.", false);
-		escape.addChoice(new Choice("Search", "You find nothing",() -> {player.displayDeathEvent();}));
-		escape.addChoice(new Choice("Wait", "You wait and get Captured", () -> {player.displayDeathEvent();}));
-		escape.addChoice(new Choice("Run", "You run and run for miles, until you finally see a forest in the distance.\n" +
-											"Hopefully you will be able to hide in there.",() -> {System.out.println();forestIndex = 0;createForest();}));
+		Event escape = new Event(new String[] {"You finally got over the wall unnoticed... for now."}, false);
+		escape.addChoice(new Choice("Search", "As you search the ground for any goodies you find the boot of you captor.... then the cell you just escaped",() -> {player.displayDeathEvent();}));
+		escape.addChoice(new Choice("Wait", "You sit down in wait until you get thrown in prison again. What were you waiting for, Christmas?", () -> {player.displayDeathEvent();}));
+		escape.addChoice(new Choice("Run", "You flee captivity into a forest, hopefully you can find some new clothes to replace your prisoner's uniform",() -> {createForest(0);}));
 		
 		prisonWall.addEvent(escape);
 
@@ -135,30 +135,52 @@ public class TextGame {
 
 	static int forestIndex = 0;
 
-	public static Location createForest() {
+	public static Location createForest(int index) {
 		Location forest =  new Location();
-		Choice[] nearbyLocations = {goTo("Tavern", () -> {createTavern();})};
+
+		forestIndex = index;
 		
 			//	Event Index 0
-		Event enterCampsite = new Event("As you get deeper into the forest you find a campsite that was abandoned long ago.\n" +
-										"There are an assortment of items left behind... hopefully one wants them back.\n" +
-										"You find a journal and decide to write your name", false);
-		enterCampsite.addChoice(new Choice("Write your name in your journal", "Type your Name",() -> {player.setName(input.nextLine());forestIndex = 1;forest.nextEvent(forestIndex);}));
-		
-		forest.addEvent(enterCampsite);
-			//	Event Index 1
-		Event getWeapon = new Event("You also find an old Backpack with a...", false);
-		getWeapon.addChoice(new Choice("Axe", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Axe", 8, 10, 48, 1));forestIndex = 2;forest.nextEvent(forestIndex);}));
-		getWeapon.addChoice(new Choice("Sword", () -> {player.getInventory().setEquippedWeapon(new Weapon("Old Sword", 5, 7 , 63, 1));forestIndex = 2; forest.nextEvent(forestIndex);}));
+		 Event enterCampsite = new Event(new String[] {"As you run you spot an old backpack near an old fire pit.","The person who must have owned this is probably dead, so I am sure they wouldn't mind if you took some things"}, false);
+		enterCampsite.addChoice(new Choice("Search Backpack", "In the backpack You find an old hatchet, some worn clothes and 15 gold coins",() -> {
+			player.addItem(new Weapon("Old Hatchet", 5, 6, 48, 1));
+			player.addItem(new Armor("Worn Shirt", 2, 0, 1));
+			player.addItem(new Armor("Worn Pants", 3, 0, 1));
+			player.addMoney(15);
 
-		forest.addEvent(getWeapon);
+			forestIndex = 1;
+			forest.nextEvent(1);
+		}));
+
+		forest.addEvent(enterCampsite);
+
+		//	Event Index 1
+		Event exploreCampsite = new Event(new String[] {"It may be best to play it safe for now and stay in the forest", "Set up camp"});
+		Choice buildCampfire = new Choice("Light a fire", () -> {
+			if(player.useItem("Stick", 6)) {
+				exploreCampsite.getChoices().remove(1);
+				System.out.println("");
+			}
+			exploreCampsite.displayEvent();
+		});
+		exploreCampsite.addChoice(new Choice("Examine fire pit", "The fire pit has grass growing inside of it.\nThere clearly hasn't been a fire in a long time", () -> {
+			exploreCampsite.getChoices().remove(1);
+			exploreCampsite.getChoices().add(1,buildCampfire);
+			exploreCampsite.displayEvent();
+		}));
+		exploreCampsite.addChoice(new Choice("Search campsite", "You find a stick.... and then another stick.... there sure are a lot of sticks in this forest\n6 sticks added to your backpack", () -> {
+			player.addItem(new Item("Stick", 6, 0));
+			exploreCampsite.displayEvent();
+		}));
+
+		forest.addEvent(exploreCampsite);
+
 			//	Event Index 2
-		Event test = new Event("test");
+		Event test = new Event(new String[] {"test"});
 		test.addNPC(createOldMan(), oldManDead);
 		
 		forest.addEvent(test);
-		
-		forest.setNearbyLocations(nearbyLocations);
+
 		forest.nextEvent(forestIndex);
 
 		return forest;
@@ -166,13 +188,12 @@ public class TextGame {
 
 	static int tavernIndex = 0;
 
-	public static Shop createTavern() {
+	public static Shop createTavern(int index) {
 		Shop tavern = new Shop("Tavern");
-		Choice[] nearbyLocations = {goTo("Forest", () -> {createForest();})};
+		tavernIndex = index;
 
 		tavern.addItem(new Item("Stick", 0));
 
-		tavern.setNearbyLocations(nearbyLocations);
 		tavern.nextEvent(tavernIndex);
 
 		return tavern;
@@ -182,7 +203,7 @@ public class TextGame {
 		player.setMaxHealth(20);
 		player.getStats().resetGame();
 
-		Event gameOver = new Event("You Died", false);
+		Event gameOver = new Event(new String []{"You Died"}, false);
 		gameOver.addChoice(new Choice("Restart Game", TextGame::run));
 		gameOver.addChoice(new Choice("Quit", () -> {System.exit(0);}));
 		player.setDeathEvent(gameOver);
@@ -193,7 +214,7 @@ public class TextGame {
 	public static void run() {
 		createPlayer();
 
-		createPrisonWall();
+		createPrisonWall(0);
 
 		System.out.println("That is all that I have created.\nThank you for playing!");
 	}
@@ -207,7 +228,7 @@ public class TextGame {
 
 		System.out.println("This is a Text Adventure Game that uses numbered choices to progress the game");
 		pause();
-		Event test = new Event("This is the basic Structure for an event\nSelect one of the choices by typing a number and the clicking enter", false);
+		Event test = new Event(new String[] {"This is the basic Structure for an event", "Select one of the choices by typing a number and the clicking enter"}, false);
 
 		test.addChoice(new Choice("Continue","Continuing ",  () -> {}));
 		test.addChoice(new Choice("Proceed","Proceeding",  () -> {}));
