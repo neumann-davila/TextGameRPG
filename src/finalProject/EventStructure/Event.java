@@ -174,6 +174,14 @@ public class Event {
 		this.eventChoices.remove(choice);
 	}
 
+	public void removeChoice(String choiceName) {
+		for(int i = 0; i < eventChoices.size(); i++) {
+			if(choiceName.equals("" + eventChoices.get(i))) {
+				eventChoices.remove(i);
+			}
+		}
+	}
+
 	public ArrayList<Choice> getChoices () {return this.eventChoices;}
 
 		//	Collects and runs the decision for the event 

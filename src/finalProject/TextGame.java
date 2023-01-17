@@ -25,7 +25,7 @@ public class TextGame {
 
 	public static void pause() {
 		try{
-			Thread.sleep(700);
+			Thread.sleep(1500);
 		}
 		catch(Exception e ) {
 
@@ -122,8 +122,8 @@ public class TextGame {
 		prisonWallIndex = index;
 		
 		Event escape = new Event(new String[] {"You finally got over the wall unnoticed... for now."}, false);
-		escape.addChoice(new Choice("Search", "As you search the ground for any goodies you find the boot of you captor.... then the cell you just escaped",() -> {player.displayDeathEvent();}));
-		escape.addChoice(new Choice("Wait", "You sit down in wait until you get thrown in prison again. What were you waiting for, Christmas?", () -> {player.displayDeathEvent();}));
+		escape.addChoice(new Choice("Search", "As you search the ground for any goodies you find the boot of you captor.... then the cell you just escaped",() -> {escape.displayEvent();}));
+		escape.addChoice(new Choice("Wait", "You sit down in wait until you get thrown in prison again. What were you waiting for, Christmas?", () -> {escape.displayEvent();}));
 		escape.addChoice(new Choice("Run", "You flee captivity into a forest, hopefully you can find some new clothes to replace your prisoner's uniform",() -> {createForest(0);}));
 		
 		prisonWall.addEvent(escape);
@@ -134,12 +134,13 @@ public class TextGame {
 	}
 
 	static int forestIndex = 0;
-
+	static boolean foundBook = false;
 	public static Location createForest(int index) {
 		Location forest =  new Location();
-
 		forestIndex = index;
-		
+
+										//	---Enter Campsite Event---	\\
+
 			//	Event Index 0
 		 Event enterCampsite = new Event(new String[] {"As you run you spot an old backpack near an old fire pit.","The person who must have owned this is probably dead, so I am sure they wouldn't mind if you took some things"}, false);
 		enterCampsite.addChoice(new Choice("Search Backpack", "In the backpack You find an old hatchet, some worn clothes and 15 gold coins",() -> {
@@ -154,40 +155,88 @@ public class TextGame {
 
 		forest.addEvent(enterCampsite);
 
+
+										//	---Explore Campsite Event---  \\
+
 		//	Event Index 1
 		Event exploreCampsite = new Event(new String[] {"It may be best to play it safe for now and stay in the forest", "Set up camp"});
+		// added after campfire is built and only works when player changes out of prison uniform
+		Choice sleep = new Choice("Rest for the night", () -> {
+			if(player.getInventory().getArmor(2).getName().equals("Prison Uniform")){
+				System.out.println("You should probably change out of your prison uniform before you go to sleep");
+				pause();
+				System.out.println("You don't want to wake up back in prison");
+				pause();
+				exploreCampsite.displayEvent();
+			}
+			else{
+				forestIndex = 2;
+				forest.nextEvent(forestIndex);
+			}
+		});
+			// added after the Examine fire pit choice is selected
 		Choice buildCampfire = new Choice("Light a fire", () -> {
 			if(player.useItem("Stick", 6)) {
 				exploreCampsite.getChoices().remove(1);
-				System.out.println("");
+				exploreCampsite.addChoice(sleep);
 			}
 			exploreCampsite.displayEvent();
 		});
-		exploreCampsite.addChoice(new Choice("Examine fire pit", "The fire pit has grass growing inside of it.\nThere clearly hasn't been a fire in a long time", () -> {
+
+
+		exploreCampsite.addChoice(new Choice("Examine fire pit", "There clearly hasn't been a fire in a long time\nHopefully I can get one going", () -> {
 			exploreCampsite.getChoices().remove(1);
 			exploreCampsite.getChoices().add(1,buildCampfire);
 			exploreCampsite.displayEvent();
 		}));
-		exploreCampsite.addChoice(new Choice("Search campsite", "You find a stick.... and then another stick.... there sure are a lot of sticks in this forest\n6 sticks added to your backpack", () -> {
+		exploreCampsite.addChoice(new Choice("Search campsite", "You find a stick.... and then another stick.... there sure are a lot of sticks in this forest, but it is to dark to see anything else\n6 Sticks added to your backpack", () -> {
 			player.addItem(new Item("Stick", 6, 0));
+			exploreCampsite.getChoices().remove(2);
 			exploreCampsite.displayEvent();
 		}));
 
 		forest.addEvent(exploreCampsite);
 
+
+
+
 			//	Event Index 2
-		Event test = new Event(new String[] {"test"});
-		test.addNPC(createOldMan(), oldManDead);
-		
-		forest.addEvent(test);
+		Event campsiteMorning = new Event(new String[] {"You wake up as the sun begins to rise", "Nothing seems out of the ordinary"});
+
+		campsiteMorning.addChoice(new Choice("Search Campsite", "You found a small brown book with writings of an outlaw's haven... Corellon. Flipping through the pages you almost notice a repetitive  mention of \"The Guild\"", () -> {
+			pause();
+			foundBook = true;
+			System.out.println("Maybe this guild can help you get to this Corellon");
+			campsiteMorning.displayEvent();
+		}));
+		campsiteMorning.addChoice(new Choice("Explore the forest", "You find a path going east and west to the south of you, and a barn in a small clearing to the east of you. Both seem pretty sketchy", () -> {
+			campsiteMorning.getChoices().remove(2);
+			campsiteMorning.addChoice(new Choice("Go to barn", () -> {
+				createBarn(0);
+			}));
+		}));
+
+		forest.addEvent(campsiteMorning);
 
 		forest.nextEvent(forestIndex);
 
 		return forest;
 	}
 
-	static int tavernIndex = 0;
 
+	static int barnIndex;
+	public static Location createBarn(int index){
+		Location barn = new Location("Barn");
+
+		Event campToBarn = new Event(new String[]{"As you approach the barn "});
+
+		campToBarn.addChoice(new Choice("", () -> {}));
+
+		barn.nextEvent(barnIndex);
+		return barn;
+	}
+
+	static int tavernIndex = 0;
 	public static Shop createTavern(int index) {
 		Shop tavern = new Shop("Tavern");
 		tavernIndex = index;
@@ -200,6 +249,18 @@ public class TextGame {
 	}
 	
 	public static void createPlayer() {
+		Event setName = new Event(new String[] {"What is your name"}, false);
+		setName.addChoice(new Choice("", () -> {
+			String name = input.nextLine();
+			Event confirm = new Event(new String[] {"Your name is " + name + "?"}, false);
+			confirm.addChoice(new Choice("Yes", () -> {
+				System.out.println("Thus begins the great epic of " + name + " the great outlaw");
+				player.setName(name);
+			}));
+			confirm.addChoice(new Choice("No", setName::displayEvent));
+
+		}));
+
 		player.setMaxHealth(20);
 		player.getStats().resetGame();
 
@@ -208,8 +269,9 @@ public class TextGame {
 		gameOver.addChoice(new Choice("Quit", () -> {System.exit(0);}));
 		player.setDeathEvent(gameOver);
 
-		player.equip(new Armor("Prison Uniform", 2, 8, 0));
-		player.equip(new Armor("Prison Uniform", 3, 0, 0));
+		player.equip(new Armor("Prisoner's Shirt", 2, 8, 0));
+		player.equip(new Armor("Prisoner's Pants", 3, 0, 0));
+		player.equip(new Armor("Old Boots", 4, 0, 1));
 	}
 	public static void run() {
 		createPlayer();
@@ -241,11 +303,16 @@ public class TextGame {
 		pause();
 	}
 	public static void main (String[] args){
-		System.out.println("\033[0;94mWelcome to NAME_TBD\nPress enter to start");
+		System.out.println("\033[0;94mWelcome to Eriador\nPress enter to start");
 		input.nextLine();
 		tutorial();
 
 		run();
+
+//		createPrisonWall(prisonWallIndex);
+//
+//		player.getStats().setStats(5, 1, 5);
+//		CombatEvent test = new CombatEvent(player, createOldMan());
 	}
 	
 }

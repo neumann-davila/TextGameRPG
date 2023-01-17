@@ -40,5 +40,6 @@ public class Armor extends Item{
         this.deffenseInc = deffenseInc;
         this.armorType = armorType;
         this.price = price;
+        this.stackable = false;
     }
 }

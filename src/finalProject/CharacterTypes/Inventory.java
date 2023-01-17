@@ -53,33 +53,72 @@ public class Inventory {
     }
 
     public void interact(Item newItem) {
-        Event interact = new Event(new String[] {"What would you like to do with " + newItem}, false);
+        Event interact = new Event(new String[] {"What would you like to do with\n" + newItem}, false);
                 //  Creates discard method
 
-        interact.addChoice(new Choice("Discard",() -> {remove(newItem);displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
+        interact.addChoice(new Choice("Discard",() -> {
+            remove(newItem);displayInventory.removeChoice(exit);
+            displayInventory.removeChoice(unequip);
+            display();
+        }));
 
-        System.out.println(newItem);
         if(newItem instanceof Weapon) {
-            interact.addChoice(new Choice("Equip", () -> {setEquippedWeapon((Weapon) newItem);}));
+            interact.addChoice(new Choice("Equip", () -> {
+                if(equippedWeapon != null) {
+                    addItem(equippedWeapon);
+                }
+                remove(newItem);
+                setEquippedWeapon((Weapon) newItem);
+                display();
+            }));
         }
         else if (newItem instanceof Armor) {
             if(((Armor) newItem).getArmorType() == 1) {
-                interact.addChoice(new Choice("Equip", () -> {equippedHelm = (Armor)newItem;remove(newItem);}));
+                interact.addChoice(new Choice("Equip", () -> {
+                    if(equippedHelm != null) {
+                        addItem(equippedHelm);
+                    }
+                    equippedHelm = (Armor)newItem;
+                    remove(newItem);
+                    display();
+                }));
             }
             else if(((Armor) newItem).getArmorType() == 2) {
-                interact.addChoice(new Choice("Equip", () -> {equippedChest = (Armor)newItem;remove(newItem);}));
+                interact.addChoice(new Choice("Equip", () -> {
+                    if(equippedChest != null) {
+                        addItem(equippedChest);
+                    }
+                    equippedChest = (Armor)newItem;
+                    remove(newItem);
+                    display();
+                }));
             }
             else if(((Armor) newItem).getArmorType() == 3) {
-                interact.addChoice(new Choice("Equip", () -> {equippedLeg = (Armor)newItem;remove(newItem);}));
+                interact.addChoice(new Choice("Equip", () -> {
+                    if(equippedLeg != null) {
+                        addItem(equippedLeg);
+                    }
+                    equippedLeg = (Armor)newItem;
+                    remove(newItem);
+                    display();
+                }));
             }
             else if(((Armor) newItem).getArmorType() == 4) {
-                interact.addChoice(new Choice("Equip", () -> {equippedBoot = (Armor)newItem;remove(newItem);}));
+                interact.addChoice(new Choice("Equip", () -> {
+                    if(equippedBoot != null) {
+                        addItem(equippedBoot);
+                    }
+                    equippedBoot = (Armor)newItem;
+                    remove(newItem);
+                    display();
+                }));
             }
         }
 
         interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
 
         interact.displayEvent();
+
     }
 
     // Displays the Inventory & adds the exit choice inventory Event and later removes it
@@ -184,10 +223,11 @@ public class Inventory {
         if(item.isStackable()) {
             for (int i = 0; i < inventory.size(); i++) {
                 if (item.getName().equals(inventory.get(i).getName())) {
+                    displayInventory.removeChoice("" + item);
 
-                inventory.get(i).adjustAmount(-amount);
+                    inventory.get(i).adjustAmount(-amount);
 
-                    if(1 < inventory.get(i).getAmount()) {
+                    if(1 <= inventory.get(i).getAmount()) {
 
                         displayInventory.addChoice(new Choice("" + item, () -> {
                             interact(item);
@@ -301,6 +341,21 @@ public class Inventory {
 
         return finalIncrease;
     }
+    public Armor getArmor(int armorType) {
+        if(armorType == 1) {
+           return equippedHelm;
+        }
+        else if(armorType == 2) {
+            return equippedChest;
+        }
+        else if(armorType == 3) {
+            return equippedLeg;
+        }
+        else if(armorType == 4) {
+            return equippedBoot;
+        }
+        return null;
+    }
     public void unequipEvent() {
         Event unequip = new Event(new String[] {"What item do you want to unequip"});
         if (equippedWeapon != null){
@@ -388,7 +443,6 @@ public class Inventory {
 
     public void setEquippedWeapon(Weapon weapon) {
         equippedWeapon = weapon;
-        remove(weapon);
     }
 
                             //      ---Money Methods---        \\

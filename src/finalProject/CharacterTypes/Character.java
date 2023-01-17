@@ -106,7 +106,7 @@ public class Character {
 
 		// I know this is bad programming but I got lazy and i just wanted to finish, maybe fix later
 	public boolean useItem(String itemName, int amount) {
-		System.out.println("\033[0;96mThis action Requires " + amount + " " + itemName);
+		System.out.println("\033[0;96mThis action requires " + amount + " " + itemName);
 		try{
 			Thread.sleep(1500);
 		}
