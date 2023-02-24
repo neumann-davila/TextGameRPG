@@ -58,7 +58,7 @@ public class Player extends Character{
         if(discardIndex < 9){
             Item tempItem = inventory.getItem(discardIndex - 1);
 
-            Event confirmGive = new Event(new String[] {"Are you sure you want to give:","" + tempItem}, false);
+            Event confirmGive = new Event("Are you sure you want to give:`" + tempItem, false);
             confirmGive.addChoice(new Choice("Yes", () -> {recipiant.receiveItem(stats.getFriendStat(recipiant), tempItem);inventory.remove(tempItem);}));
             confirmGive.addChoice(new Choice("No", () -> {}));
 
@@ -76,7 +76,7 @@ public class Player extends Character{
     public void pickPocket(NPC victim) {
 
 
-        Event pickPocket = new Event(new String[] {"Select one item to steal"}, false);
+        Event pickPocket = new Event("Select one item to steal", false);
 
         //Iterates through every item in npc inventory
         for (Item tempItem : victim.getInventory().getInventory()) {

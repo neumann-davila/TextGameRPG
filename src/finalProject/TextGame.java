@@ -68,7 +68,7 @@ public class TextGame {
 
 	public static boolean oldManDead = false;
 	public static NPC createOldMan() {
-		NPC oldMan = new NPC("Old man", 6, 20);
+		NPC oldMan = new NPC("Old man", 15, 20);
 
 		oldMan.addMoney(5);
 		oldMan.getInventory().setEquippedWeapon(new Weapon("Cane", 1, 3, 47, 1));
@@ -82,7 +82,7 @@ public class TextGame {
 		
 		oldMan.addDialogue("GET ER WAY FROM ME", -1);
 		
-		Event death = new Event(new String[] {"You see the corpse of the man you just killed","What wold you like to do"}, false);
+		Event death = new Event("You see the corpse of the man you just killed`What wold you like to do", false);
 		death.addChoice(new Choice("Loot Body", () -> {oldMan.loot(player); death.displayEvent();}));
 		death.addChoice(new Choice("Leave", () -> {oldManDead = true;}));
 		oldMan.setDeathEvent(death);
@@ -121,7 +121,7 @@ public class TextGame {
 		Location prisonWall = new Location();
 		prisonWallIndex = index;
 		
-		Event escape = new Event(new String[] {"You finally got over the wall unnoticed... for now."}, false);
+		Event escape = new Event("You finally got over the wall unnoticed... for now.", false);
 		escape.addChoice(new Choice("Search", "As you search the ground for any goodies you find the boot of you captor.... then the cell you just escaped",() -> {escape.displayEvent();}));
 		escape.addChoice(new Choice("Wait", "You sit down in wait until you get thrown in prison again. What were you waiting for, Christmas?", () -> {escape.displayEvent();}));
 		escape.addChoice(new Choice("Run", "You flee captivity into a forest, hopefully you can find some new clothes to replace your prisoner's uniform",() -> {createForest(0);}));
@@ -141,8 +141,13 @@ public class TextGame {
 
 										//	---Enter Campsite Event---	\\
 
-			//	Event Index 0
-		 Event enterCampsite = new Event(new String[] {"As you run you spot an old backpack near an old fire pit.","The person who must have owned this is probably dead, so I am sure they wouldn't mind if you took some things"}, false);
+			/*
+			 *	Event Index 0
+			 *
+			 * Initial entry of the player gaining default items
+			 */
+
+		 Event enterCampsite = new Event("As you run you spot an old backpack near an old fire pit.`The person who must have owned this is probably dead, so I am sure they wouldn't mind if you took some things", false);
 		enterCampsite.addChoice(new Choice("Search Backpack", "In the backpack You find an old hatchet, some worn clothes and 15 gold coins",() -> {
 			player.addItem(new Weapon("Old Hatchet", 5, 6, 48, 1));
 			player.addItem(new Armor("Worn Shirt", 2, 0, 1));
@@ -158,9 +163,15 @@ public class TextGame {
 
 										//	---Explore Campsite Event---  \\
 
-		//	Event Index 1
-		Event exploreCampsite = new Event(new String[] {"It may be best to play it safe for now and stay in the forest", "Set up camp"});
-		// added after campfire is built and only works when player changes out of prison uniform
+		/*
+		 * Event Index 1
+		 *
+		 * Campsite Event requiring player to better learn how to play the game - Understanding the inventory system
+		 */
+
+		Event exploreCampsite = new Event("It may be best to play it safe for now and stay in the forest`Set up camp");
+
+			// added after campfire is built and only works when player changes out of prison uniform
 		Choice sleep = new Choice("Rest for the night", () -> {
 			if(player.getInventory().getArmor(2).getName().equals("Prison Uniform")){
 				System.out.println("You should probably change out of your prison uniform before you go to sleep");
@@ -174,7 +185,8 @@ public class TextGame {
 				forest.nextEvent(forestIndex);
 			}
 		});
-			// added after the Examine fire pit choice is selected
+
+			// This choice is added after the Examine fire pit choice is selected
 		Choice buildCampfire = new Choice("Light a fire", () -> {
 			if(player.useItem("Stick", 6)) {
 				exploreCampsite.getChoices().remove(1);
@@ -198,10 +210,12 @@ public class TextGame {
 		forest.addEvent(exploreCampsite);
 
 
-
-
-			//	Event Index 2
-		Event campsiteMorning = new Event(new String[] {"You wake up as the sun begins to rise", "Nothing seems out of the ordinary"});
+			/*
+			 * Event Index 2
+			 *
+			 * The next morning the player has multiple choices a\
+			 */
+		Event campsiteMorning = new Event("You wake up as the sun begins to rise`Nothing seems out of the ordinary");
 
 		campsiteMorning.addChoice(new Choice("Search Campsite", "You found a small brown book with writings of an outlaw's haven... Corellon. Flipping through the pages you almost notice a repetitive  mention of \"The Guild\"", () -> {
 			pause();
@@ -228,9 +242,13 @@ public class TextGame {
 	public static Location createBarn(int index){
 		Location barn = new Location("Barn");
 
-		Event campToBarn = new Event(new String[]{"As you approach the barn "});
+		Event campToBarn = new Event("Test Event");
 
-		campToBarn.addChoice(new Choice("", () -> {}));
+		campToBarn.addNPC(createOldMan(),oldManDead);
+
+		campToBarn.addChoice(new Choice("Go to Tavern", () -> {
+			createTavern(0);
+		}));
 
 		barn.nextEvent(barnIndex);
 		return barn;
@@ -249,10 +267,10 @@ public class TextGame {
 	}
 	
 	public static void createPlayer() {
-		Event setName = new Event(new String[] {"What is your name"}, false);
+		Event setName = new Event("What is your name", false);
 		setName.addChoice(new Choice("", () -> {
 			String name = input.nextLine();
-			Event confirm = new Event(new String[] {"Your name is " + name + "?"}, false);
+			Event confirm = new Event("Your name is " + name + "?", false);
 			confirm.addChoice(new Choice("Yes", () -> {
 				System.out.println("Thus begins the great epic of " + name + " the great outlaw");
 				player.setName(name);
@@ -264,7 +282,7 @@ public class TextGame {
 		player.setMaxHealth(20);
 		player.getStats().resetGame();
 
-		Event gameOver = new Event(new String []{"You Died"}, false);
+		Event gameOver = new Event("You Died", false);
 		gameOver.addChoice(new Choice("Restart Game", TextGame::run));
 		gameOver.addChoice(new Choice("Quit", () -> {System.exit(0);}));
 		player.setDeathEvent(gameOver);
@@ -290,7 +308,7 @@ public class TextGame {
 
 		System.out.println("This is a Text Adventure Game that uses numbered choices to progress the game");
 		pause();
-		Event test = new Event(new String[] {"This is the basic Structure for an event", "Select one of the choices by typing a number and the clicking enter"}, false);
+		Event test = new Event("This is the basic Structure for an event`Select one of the choices by typing a number and the clicking enter", false);
 
 		test.addChoice(new Choice("Continue","Continuing ",  () -> {}));
 		test.addChoice(new Choice("Proceed","Proceeding",  () -> {}));
@@ -309,10 +327,6 @@ public class TextGame {
 
 		run();
 
-//		createPrisonWall(prisonWallIndex);
-//
-//		player.getStats().setStats(5, 1, 5);
-//		CombatEvent test = new CombatEvent(player, createOldMan());
 	}
 	
 }

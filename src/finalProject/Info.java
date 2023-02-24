@@ -22,7 +22,7 @@ public class Info {
         }
     }
 
-    public Info(String[] infoText) {
-        this.infoText = infoText;
+    public Info(String infoText) {
+        this.infoText = infoText.split("`");
     }
 }

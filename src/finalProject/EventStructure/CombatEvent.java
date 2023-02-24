@@ -76,7 +76,7 @@ public class CombatEvent {
             return;
         }
 
-        Event combat = new Event(new String[] {"Health: " + player.healthBar()});
+        Event combat = new Event("Health: " + player.healthBar());
 
             // Checks the equipped Weapon and creates a choice based Weapon type
         combat.addChoice(new Choice("Attack: " + player.getEquippedWeapon(), () -> {
@@ -120,8 +120,7 @@ public class CombatEvent {
     public void playerCounter(NPC npc) {
 
             // Runs player counter event
-        Event counter = new Event(new String[] {"During the attack you try to...",
-                                                "Choose an action:"}, false);
+        Event counter = new Event("During the attack you try to...`Choose an action:", false);
 
             // Dodging attacks allows for damage negation on a successful dexterity roll
         counter.addChoice(new Choice("Dodge", () -> {

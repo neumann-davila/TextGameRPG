@@ -47,16 +47,16 @@ public class StatManager {
 	private Stat xp = new Stat("Experience Points");
 	private int level;
 	private int totalStatPoints;
-	private Info info = new Info(new String[]{	"The stat system is a very simple system\n",
-												"The Strength Stat is used mainly in combat but has the potential to be used outside of combat as well.",
-												"In combat your base Health is 20, but for each point you add to strength a point will be added to your health.",
-												"Strength also gives you rng based bonus damage in combat.",
-												"Strength may also be used when interacting with random objects within the game.\nExample: Lifting something heavy.\n",
-												"The Dexterity Stat is used both in and outside of combat.",
-												"In combat your dexterity score is used to determine who is starting in the combat cycle as well as your ability to run from your enemy.",
-												"Outside of combat Dexterity relates to any action that involves precise and complex movements.\nExample: Pickpocketing\n",
-												"The Charisma stat is exclusively used outside of combat in NPC interactions.",
-												"Charisma can be highly useful in persuading NPC's as well as increasing your general friendship with the NPC."});
+	private Info info = new Info(	"The stat system is a very simple system\n`" +
+									"The Strength Stat is used mainly in combat but has the potential to be used outside of combat as well.`" +
+									"In combat your base Health is 20, but for each point you add to strength a point will be added to your health.`" +
+									"Strength also gives you rng based bonus damage in combat.`" +
+									"Strength may also be used when interacting with random objects within the game.\nExample: Lifting something heavy.\n`" +
+									"The Dexterity Stat is used both in and outside of combat.`" +
+									"In combat your dexterity score is used to determine who is starting in the combat cycle as well as your ability to run from your enemy.`" +
+									"Outside of combat Dexterity relates to any action that involves precise and complex movements.\nExample: Pickpocketing\n`" +
+									"The Charisma stat is exclusively used outside of combat in NPC interactions.`" +
+									"Charisma can be highly useful in persuading NPC's as well as increasing your general friendship with the NPC.`");
 
 
 	public String toString() {
@@ -83,7 +83,7 @@ public class StatManager {
 		int tempDex = dexterity.getStat();
 		
 		while(totalStatPoints > 0) {
-			Event setStats = new Event(new String[] {"You have " + totalStatPoints + " stat points","Please chose which stat you would like to increase" }, false);
+			Event setStats = new Event("You have " + totalStatPoints + " stat points`Please chose which stat you would like to increase", false);
 			
 			setStats.addChoice(new Choice("" + strength, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {strength.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
 			setStats.addChoice(new Choice("" + dexterity, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {dexterity.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
@@ -93,7 +93,7 @@ public class StatManager {
 
 			setStats.displayEvent();
 		}
-		Event confirmStats = new Event(new String[] {"Are these the stats you wish to keep?","" + this}, false);
+		Event confirmStats = new Event("Are these the stats you wish to keep?`" + this, false);
 		
 		confirmStats.addChoice(new Choice("Confirm Stats", () -> {TextGame.player.adjustMaxHealth(strength.getStat() - tempStr);}));
 		confirmStats.addChoice(new Choice("Reset Stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);setStats();}));

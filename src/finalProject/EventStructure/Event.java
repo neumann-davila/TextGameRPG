@@ -141,8 +141,8 @@ public class Event {
 
 		}));
 		NPCChoices.add(new Choice("Info", () -> {
-			Info info = new Info(new String[] {	"In this game NPC's are linked to a friend stat.",
-												"Although these stats are not completely visible an NPC's interactions with you may change based on your level of friendship."});
+			Info info = new Info(	"In this game NPC's are linked to a friend stat.`" +
+									"Although these stats are not completely visible an NPC's interactions with you may change based on your level of friendship.");
 			info.display();
 			NPCEvent(npc);
 		}));
@@ -218,13 +218,13 @@ public class Event {
 		eventChoices.add(new Choice("Open Backpack", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 	
-	public Event(String[] description) {
-		this.description = description;
+	public Event(String description) {
+		this.description = description.split("`");
 		eventChoices.add(new Choice("Show Inventory", () -> {TextGame.player.getInventory().display();displayEvent();}));
 	}
 		//	Special Constructor for events without default choice like Display Inventory
-	public Event(String[] description, boolean containsDefaultChoices) {
-		this.description = description;
+	public Event(String description, boolean containsDefaultChoices) {
+		this.description = description.split("`");
 		this.isDefault = containsDefaultChoices;
 	}
 

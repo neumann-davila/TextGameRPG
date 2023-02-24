@@ -15,7 +15,6 @@ import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.Info;
 import finalProject.Items.*;
-import finalProject.Items.Consumable.Consumables;
 import finalProject.Items.Weapons.Weapon;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Inventory {
     private Scanner input = new Scanner(System.in);
 
     private ArrayList<Item> inventory = new ArrayList<Item>();
-    private Event displayInventory = new Event(new String[] {"What would you like to do in your inventory"}, false);
+    private Event displayInventory = new Event("What would you like to do in your inventory", false);
     private Choice exit = new Choice("Exit","Exiting Inventory",  () -> {});
     private Choice unequip = new Choice("Unequip Item", () -> {unequipEvent();});
     private Choice info = new Choice("Info", () -> {info();});
@@ -53,12 +52,14 @@ public class Inventory {
     }
 
     public void interact(Item newItem) {
-        Event interact = new Event(new String[] {"What would you like to do with\n" + newItem}, false);
+        Event interact = new Event("What would you like to do with\n" + newItem, false);
                 //  Creates discard method
 
         interact.addChoice(new Choice("Discard",() -> {
             remove(newItem);displayInventory.removeChoice(exit);
             displayInventory.removeChoice(unequip);
+            displayInventory.removeChoice(exit);
+            displayInventory.removeChoice(info);
             display();
         }));
 
@@ -69,6 +70,9 @@ public class Inventory {
                 }
                 remove(newItem);
                 setEquippedWeapon((Weapon) newItem);
+                displayInventory.removeChoice(exit);
+                displayInventory.removeChoice(unequip);
+                displayInventory.removeChoice(info);
                 display();
             }));
         }
@@ -80,6 +84,9 @@ public class Inventory {
                     }
                     equippedHelm = (Armor)newItem;
                     remove(newItem);
+                    displayInventory.removeChoice(exit);
+                    displayInventory.removeChoice(unequip);
+                    displayInventory.removeChoice(info);
                     display();
                 }));
             }
@@ -90,6 +97,9 @@ public class Inventory {
                     }
                     equippedChest = (Armor)newItem;
                     remove(newItem);
+                    displayInventory.removeChoice(exit);
+                    displayInventory.removeChoice(unequip);
+                    displayInventory.removeChoice(info);
                     display();
                 }));
             }
@@ -100,6 +110,9 @@ public class Inventory {
                     }
                     equippedLeg = (Armor)newItem;
                     remove(newItem);
+                    displayInventory.removeChoice(exit);
+                    displayInventory.removeChoice(unequip);
+                    displayInventory.removeChoice(info);
                     display();
                 }));
             }
@@ -110,12 +123,19 @@ public class Inventory {
                     }
                     equippedBoot = (Armor)newItem;
                     remove(newItem);
+                    displayInventory.removeChoice(exit);
+                    displayInventory.removeChoice(unequip);
+                    displayInventory.removeChoice(info);
                     display();
                 }));
             }
         }
 
-        interact.addChoice(new Choice("Exit", () -> {displayInventory.removeChoice(exit);displayInventory.removeChoice(unequip);display();}));
+        interact.addChoice(new Choice("Exit", () -> {
+            displayInventory.removeChoice(exit);
+            displayInventory.removeChoice(unequip);
+            displayInventory.removeChoice(info);
+            display();}));
 
         interact.displayEvent();
 
@@ -147,29 +167,29 @@ public class Inventory {
     }
 
     private void info() {
-        Event info = new Event(new String[] {"What item type do you want more info on?"}, false);
+        Event info = new Event("What item type do you want more info on?", false);
 
         info.addChoice(new Choice("Melee Weapons", () -> {
-            Info meleeWeapon = new Info(new String[]{   "Melee Weapons are Weapons used in close combat.",
-                                                        "These Weapons tend to do more damage than ranged weapons, but they are unable to counter attack against enemies using ranged weapons"});
+            Info meleeWeapon = new Info("Melee Weapons are Weapons used in close combat.`" +
+                                        "These Weapons tend to do more damage than ranged weapons, but they are unable to counter attack against enemies using ranged weapons");
             meleeWeapon.display();
         }));
 
         info.addChoice(new Choice("Ranged Weapons", () -> {
-            Info rangedWeapon = new Info(new String[] { "Ranged Weapons are Weapons used in ranged combat.",
-                                                        "These Weapons tend to do less damage than melee weapons, but are always able to counter attack enemies in combat"});
+            Info rangedWeapon = new Info(   "Ranged Weapons are Weapons used in ranged combat.`" +
+                                            "These Weapons tend to do less damage than melee weapons, but are always able to counter attack enemies in combat");
             rangedWeapon.display();
         }));
 
         info.addChoice(new Choice("Armor", () -> {
-            Info armor = new Info(new String[]{ "In combat Armor has a chance to negate damage",
-                                                "This is done with your defense stat and a bit of rng"});
+            Info armor = new Info(  "In combat Armor has a chance to negate damage`" +
+                                    "This is done with your defense stat and a bit of rng");
            armor.display();
         }));
 
         info.addChoice(new Choice("Consumables", () -> {
-            Info consumables = new Info(new String[]{   "Consumable Items can be used inside and outside of combat",
-                                                        "These items usually will have a description on their effect and once they are used there is no getting it back"});
+            Info consumables = new Info("Consumable Items can be used inside and outside of combat`" +
+                                        "These items usually will have a description on their effect and once they are used there is no getting it back");
             consumables.display();
         }));
     }
@@ -357,7 +377,7 @@ public class Inventory {
         return null;
     }
     public void unequipEvent() {
-        Event unequip = new Event(new String[] {"What item do you want to unequip"});
+        Event unequip = new Event("What item do you want to unequip");
         if (equippedWeapon != null){
            unequip.addChoice(new Choice("Unequip " + equippedWeapon, () -> {unequip(equippedWeapon);}));
         }

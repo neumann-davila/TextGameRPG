@@ -91,7 +91,7 @@ public class NPC extends Character {
 	}
 
 	public void loot(Player player) {
-		Event loot = new Event(new String[] {"Select what items you would like to take"});
+		Event loot = new Event("Select what items you would like to take");
 		inventory.unequipAll();
 		//Iterates through every item in npc inventory
 		for (Item tempItem : inventory.getInventory()) {
