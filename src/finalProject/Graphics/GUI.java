@@ -19,7 +19,7 @@ public class GUI implements ActionListener{
     private Panel mainTop = new Panel();
     private Panel mainBottom = new Panel();
 
-    private Panel playerInfo;
+    private PlayerInfo playerInfo = new PlayerInfo();
     private Panel event;
     private Panel location = new Panel();
 
@@ -39,8 +39,11 @@ public class GUI implements ActionListener{
 
         location.add(balls);
         mainTop.add(location);
-        mainCons.gridy = 1;
+        mainCons.gridy = 0;
         main.add(mainTop, mainCons);
+
+        mainCons.gridy = 1;
+        main.add(playerInfo, mainCons);
 
         balls.setText("cum");
 
