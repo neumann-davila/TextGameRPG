@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 import finalProject.CharacterTypes.*;
 import finalProject.EventStructure.*;
+import finalProject.Graphics.GUI;
 import finalProject.Items.*;
 import finalProject.Items.Weapons.Weapon;
 import finalProject.Locations.*;
@@ -102,9 +103,9 @@ public class TextGame {
 		 * Location name = new Location();
 		 * 		- Add nearby Locations
 		 * 		- Must add Events & choices in method
-		 * 		- location.nextEvent(eventIndex);
-		 * 		- location.addEvent(Event);
-		 * 
+		 * 			- location.nextEvent(eventIndex);
+		 * 			- location.addEvent(Event);
+		 * 			- Strings are separated by ` in order to show that there should be a pauxe and then a new line
 		 */
 
 
@@ -213,7 +214,10 @@ public class TextGame {
 			/*
 			 * Event Index 2
 			 *
-			 * The next morning the player has multiple choices a\
+			 * The next morning the player has multiple choices that boil dwn to two main choices
+			 * 	1.)	go to the farm house and discover the guild
+			 * 	2.) walk down the path and discover the town of sindrin
+			 *
 			 */
 		Event campsiteMorning = new Event("You wake up as the sun begins to rise`Nothing seems out of the ordinary");
 
@@ -223,10 +227,10 @@ public class TextGame {
 			System.out.println("Maybe this guild can help you get to this Corellon");
 			campsiteMorning.displayEvent();
 		}));
-		campsiteMorning.addChoice(new Choice("Explore the forest", "You find a path going east and west to the south of you, and a barn in a small clearing to the east of you. Both seem pretty sketchy", () -> {
+		campsiteMorning.addChoice(new Choice("Explore the forest", "You find a path going east and west to the south of you, and a small farm house in a clearing to the east of you. Maybe I can find some help getting to Corellon.", () -> {
 			campsiteMorning.getChoices().remove(2);
-			campsiteMorning.addChoice(new Choice("Go to barn", () -> {
-				createBarn(0);
+			campsiteMorning.addChoice(new Choice("Go to house", () -> {
+				createFarmHouse(0);
 			}));
 		}));
 
@@ -239,16 +243,18 @@ public class TextGame {
 
 
 	static int barnIndex;
-	public static Location createBarn(int index){
+	public static Location createFarmHouse(int index){
 		Location barn = new Location("Barn");
+		barnIndex = index;
+			//TODO make approach barn event/ flesh out this story
+		Event campToBarn = new Event("As you approach, the clearing slowly opens up, but it seems to be eerily quiet.`" +
+										"Maybe no one is home?`" +
+										"Regardless, you creep closer to the edge of the clearing and spot a small two story farm house and a horse stable.");
 
-		Event campToBarn = new Event("Test Event");
 
-		campToBarn.addNPC(createOldMan(),oldManDead);
-
-		campToBarn.addChoice(new Choice("Go to Tavern", () -> {
-			createTavern(0);
+		campToBarn.addChoice(new Choice("Investigate Stable", () -> {
 		}));
+
 
 		barn.nextEvent(barnIndex);
 		return barn;
@@ -272,7 +278,7 @@ public class TextGame {
 			String name = input.nextLine();
 			Event confirm = new Event("Your name is " + name + "?", false);
 			confirm.addChoice(new Choice("Yes", () -> {
-				System.out.println("Thus begins the great epic of " + name + " the great outlaw");
+				System.out.println("Thus begins the great epic of " + name);
 				player.setName(name);
 			}));
 			confirm.addChoice(new Choice("No", setName::displayEvent));
@@ -321,6 +327,8 @@ public class TextGame {
 		pause();
 	}
 	public static void main (String[] args){
+		GUI game = new GUI();
+
 		System.out.println("\033[0;94mWelcome to Eriador\nPress enter to start");
 		input.nextLine();
 		tutorial();
