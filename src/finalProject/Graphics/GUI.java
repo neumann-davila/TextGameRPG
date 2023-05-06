@@ -23,29 +23,36 @@ public class GUI implements ActionListener{
     private Panel event;
     private Panel location = new Panel();
 
-
+    private JLabel balls = new JLabel("tree");
     @Override
     public void actionPerformed(ActionEvent e) {
 
     }
 
     public GUI (){
-        main.setSize(500, 300);
+        main.setSize(700, 500);
 
         main.setLayout(new GridBagLayout());
-        GridBagConstraints mainCons = new GridBagConstraints();
+        GridBagConstraints cons = new GridBagConstraints();
+        cons.ipady = 10;
+        cons.ipadx = 10;
 
-        JLabel balls = new JLabel("Balls");
+
+        JLabel location = new JLabel("");
 
         location.add(balls);
         mainTop.add(location);
-        mainCons.gridy = 0;
-        main.add(mainTop, mainCons);
+        cons.gridy = 0;
+        main.add(mainTop, cons);
 
-        mainCons.gridy = 1;
-        main.add(playerInfo, mainCons);
+        cons.gridy = 1;
+        main.add(mainBottom, cons);
 
-        balls.setText("cum");
+        cons.gridy = 0;
+        cons.gridx = 1;
+        mainBottom.add(playerInfo, cons);
+
+        balls.setText("stuff");
 
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // or 3, to stop the application from running when it is closed
         main.setVisible(true);

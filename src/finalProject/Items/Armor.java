@@ -27,6 +27,14 @@ public class Armor extends Item{
 
         return super.toString() + summary;
     }
+
+    @Override
+    public String getDisplayDescription(){
+        String summary = "";
+        summary +=  "\n" +
+                "     Defense: " + deffenseInc;
+        return super.getDisplayDescription() + summary;
+    }
     public int getArmorType() {
         return armorType;
     }

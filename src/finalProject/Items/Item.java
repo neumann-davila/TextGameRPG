@@ -27,7 +27,21 @@ public class Item {
 					           "	 Price: " + price + " coins";
 		}
 	}
-	
+
+	public String getDisplayName(){
+		if(amount > 1){
+			return this.name + " x" + amount;
+
+		}
+		else{
+			return this.name;
+
+		}
+	}
+
+	public String getDisplayDescription(){
+		return "Price: " + price + "coins";
+	}
 	public String getName() {
 		return this.name;
 	}

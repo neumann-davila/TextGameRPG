@@ -29,6 +29,16 @@ public class Weapon extends Item {
 		
 		return (super.toString() + summary);
 	}
+
+	@Override public String getDisplayDescription() {
+		String summary = "";
+
+		summary += "\n";
+		summary += "     Damage: " + damageMin + " - " + damageMax + "\n";
+		summary += "     Hit Chance: " + hitChance + "%";
+
+		return (super.getDisplayDescription() + summary);
+	}
 		//	creates an attack using random values between the min and max
 	public int attack() {
 		Random rand = new Random();

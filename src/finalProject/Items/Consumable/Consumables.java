@@ -20,6 +20,10 @@ public class Consumables extends Item {
         return super.toString() + "\n     " + description;
     }
 
+    @Override
+    public String getDisplayDescription() {
+        return super.getDisplayDescription() + "\n     " + description;
+    }
     public void use() {
         outcome.react();
     }

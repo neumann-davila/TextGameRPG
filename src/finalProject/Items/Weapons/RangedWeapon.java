@@ -17,6 +17,11 @@ public class RangedWeapon extends Weapon {
         return super.toString() + "\n     Ammo: " + ammoName;
     }
 
+    @Override
+    public String getDisplayDescription() {
+        return super.getDisplayDescription() + "\n     Ammo: " + ammoName;
+    }
+
     public String getAmmoName() {
         return ammoName;
     }
