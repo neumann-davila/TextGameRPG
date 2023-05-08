@@ -24,6 +24,9 @@ public class TextGame {
 		//	Main Player declaration
 	public static Player player =  new Player();
 
+	public static GUI game = new GUI();
+
+
 	public static void pause() {
 		try{
 			Thread.sleep(1500);
@@ -300,6 +303,8 @@ public class TextGame {
 	public static void run() {
 		createPlayer();
 
+		game.updatePlayer();
+
 		createPrisonWall(0);
 
 		System.out.println("That is all that I have created.\nThank you for playing!");
@@ -327,7 +332,6 @@ public class TextGame {
 		pause();
 	}
 	public static void main (String[] args){
-		GUI game = new GUI();
 
 		System.out.println("\033[0;94mWelcome to Eriador\nPress enter to start");
 		input.nextLine();

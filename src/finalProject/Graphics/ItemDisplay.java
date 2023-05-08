@@ -13,6 +13,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ItemDisplay extends JButton {
+    public void setItem(Item item) {
+        setText(item.getDisplayDescription());
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(item.getDisplayName()),
+                BorderFactory.createEmptyBorder(0 ,20, 0, 20)
+        ));
+    }
     public ItemDisplay (Item item) {
 
         setText(item.getDisplayDescription());
@@ -27,7 +34,7 @@ public class ItemDisplay extends JButton {
         setText("N/A");
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Empty"),
-                BorderFactory.createEmptyBorder(0 ,20, 0, 20)
+                BorderFactory.createEmptyBorder(0 ,30, 0, 30)
         ));
 
     }

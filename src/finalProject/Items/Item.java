@@ -20,11 +20,11 @@ public class Item {
 	public String toString() {
 		if(amount > 1) {
 			return this.name + " x" + amount +
-								"\n     Price: " + price + " coins";
+								"\n     Price: " + price + " Coins";
 		}
 		else {
 			return this.name + ": \n" +
-					           "	 Price: " + price + " coins";
+					           "	 Price: " + price + " Coins";
 		}
 	}
 
@@ -40,7 +40,7 @@ public class Item {
 	}
 
 	public String getDisplayDescription(){
-		return "Price: " + price + "coins";
+		return "Price: " + price + " Coins";
 	}
 	public String getName() {
 		return this.name;

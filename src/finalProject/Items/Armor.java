@@ -31,9 +31,9 @@ public class Armor extends Item{
     @Override
     public String getDisplayDescription(){
         String summary = "";
-        summary +=  "\n" +
-                "     Defense: " + deffenseInc;
-        return super.getDisplayDescription() + summary;
+        summary +=  "<html>Price: " + price + " Coins<br />" +
+                "     Defense: " + deffenseInc + "</html>";
+        return summary;
     }
     public int getArmorType() {
         return armorType;

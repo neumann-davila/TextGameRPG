@@ -29,6 +29,10 @@ public class GUI implements ActionListener{
 
     }
 
+    public void updatePlayer() {
+        playerInfo.updatePlayer();
+    }
+
     public GUI (){
         main.setSize(700, 500);
 

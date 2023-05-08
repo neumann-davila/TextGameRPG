@@ -152,6 +152,8 @@ public class StatManager {
 				xp.adjustStat((level + 1) * -10);
 			}
 		}
+
+		public int getLevel(){return this.level;}
 		
 		public void levelUp() {
 			level++;
