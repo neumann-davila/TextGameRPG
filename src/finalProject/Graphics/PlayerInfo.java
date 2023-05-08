@@ -7,25 +7,35 @@
  */
 package finalProject.Graphics;
 
+import finalProject.CharacterTypes.Player;
+import finalProject.Items.Item;
+import finalProject.TextGame;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class PlayerInfo extends JComponent {
 
+    private Player player = TextGame.player;
+
     private JLabel name = new JLabel("Name Unknown");
 
-    JPanel mainPanel = new JPanel();
-    JPanel genInfo = new JPanel();
-    JPanel inventory = new JPanel();
+    private JPanel mainPanel = new JPanel();
+    private JPanel genInfo = new JPanel();
+    private JPanel inventory = new JPanel();
 
-    JLabel health = new JLabel("*");
-    JLabel level = new JLabel("*");
-    JLabel exp = new JLabel("*");
-    JLabel strength = new JLabel("*");
-    JLabel dexterity = new JLabel("*");
-    JLabel charisma = new JLabel("*");
+    private JLabel health = new JLabel("*");
+    private JLabel level = new JLabel("*");
+    private JLabel exp = new JLabel("*");
+    private JLabel strength = new JLabel("*");
+    private JLabel dexterity = new JLabel("*");
+    private JLabel charisma = new JLabel("*");
 
+
+    public void updatePlayer(){
+
+    }
     private void buildMainPanel(){
 
         /*
@@ -48,7 +58,7 @@ public class PlayerInfo extends JComponent {
                 //  ---Gen Info---  \\
 
         genInfo.setLayout(new GridBagLayout());
-
+        genInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
             //  Start of Column 1
         cons.gridx = 0;
@@ -130,10 +140,12 @@ public class PlayerInfo extends JComponent {
         cons.gridy = 2;
         genInfo.add(charisma, cons);
 
+        cons.gridy = 0;
+        cons.gridx = 1;
+        mainPanel.add(inventory, cons);
 
-        inventory.setLayout(new GridLayout(4, 2));
-
-
+        inventory.setLayout(new GridLayout(4,2));
+        inventory.add(new ItemDisplay());
 
     }
 
@@ -142,18 +154,21 @@ public class PlayerInfo extends JComponent {
         setBorder(new EmptyBorder(10, 10 ,10, 10));
         GridBagConstraints mainCons = new GridBagConstraints();
         mainCons.anchor = GridBagConstraints.WEST;
-        mainCons.ipadx = 10;
+
 
         setLayout(new GridBagLayout());
 
         mainCons.gridy = 0;
         add(name, mainCons);
 
+        mainCons.gridx = 1;
+        add(new JLabel("Inventory"), mainCons);
+
         mainCons.gridy = 1;
+        mainCons.gridx = 0;
         add(mainPanel, mainCons);
 
         buildMainPanel();
-
 
     }
 
