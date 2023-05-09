@@ -53,6 +53,10 @@ public class PlayerInfo extends JComponent {
     public void createItemPanel(ItemDisplay button){
         Item item = button.getItem();
 
+        for(ActionListener listener: button.getActionListeners()){
+            button.removeActionListener(listener);
+        }
+
         Inventory playerInventory = TextGame.player.getInventory();
 
         JPanel itemPanel = new JPanel();
@@ -70,6 +74,8 @@ public class PlayerInfo extends JComponent {
         confirmButtons.setLayout(new GridLayout(2, 1));
 
         JPanel confirm = new JPanel();
+        confirm.setLayout(new GridBagLayout());
+
         cons.gridy = 1;
         cons.gridx = 1;
         add(confirm, cons);
@@ -87,9 +93,6 @@ public class PlayerInfo extends JComponent {
                 SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, item.getAmount(), 1);
                 JSpinner amountDiscard = new JSpinner(numberModel);
 
-
-                confirm.setLayout(new GridBagLayout());
-
                 cons.gridy = 0;
                 cons.gridx = 0;
                 confirm.add(new JLabel("Are you sure you want to remove " + item.getDisplayName()), cons);
@@ -102,8 +105,39 @@ public class PlayerInfo extends JComponent {
                     }
                 });
 
+                    // Creates two separate question styles based on if there is only one object or multiple
+                if(item.equals(playerInventory.getEquippedWeapon())){
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            playerInventory.setEquippedWeapon(new Weapon());
+                            remove(confirm);
+                            TextGame.graphics.updateInventory();
+                            TextGame.graphics.revalidate();
 
-                if(item.getAmount() == 1){
+                        }
+                    });
+                    confirm.remove(0);
+                    cons.gridy = 1;
+                    confirm.add(new JLabel("Are you sure you want to unequip and discard " + playerInventory.getEquippedWeapon().getName()), cons);
+
+                }
+                else if(item instanceof Armor && item.equals(playerInventory.getArmor(((Armor) item).getArmorType()))){
+                    int armorType = ((Armor) item).getArmorType();
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            playerInventory.unequip(playerInventory.getArmor(armorType));
+                            remove(confirm);
+                            TextGame.graphics.updateInventory();
+                            TextGame.graphics.revalidate();
+                        }
+                    });
+                    confirm.remove(0);
+                    cons.gridy = 1;
+                    confirm.add(new JLabel("Are you sure you want to unequip and discard " + playerInventory.getArmor(armorType).getName()), cons);
+                }
+                else if(item.getAmount() == 1){
                     yes.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -112,16 +146,6 @@ public class PlayerInfo extends JComponent {
                             TextGame.graphics.updateInventory();
                         }
                     });
-
-
-
-                    cons.gridy = 1;
-
-                    confirm.add(confirmButtons, cons);
-                    confirmButtons.add(yes);
-                    confirmButtons.add(no);
-
-                    TextGame.graphics.revalidate();
 
                 }
                 else if(item.getAmount() > 1){
@@ -140,31 +164,59 @@ public class PlayerInfo extends JComponent {
                     cons.gridy = 2;
                     confirm.add(amountDiscard, cons);
 
-                    cons.gridy= 3;
-                    confirm.add(confirmButtons, cons);
-                    confirmButtons.add(yes);
-                    confirmButtons.add(no);
-
-                    TextGame.graphics.revalidate();
-
                 }
+                cons.gridy++;
+
+                confirm.add(confirmButtons, cons);
+                confirmButtons.add(yes);
+                confirmButtons.add(no);
+
+                TextGame.graphics.revalidate();
 
             }
         });
 
         buttons.add(discard);
 
+            //Determines if the Item requires and equip option
+
         if(item instanceof Weapon){
 
             equip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    remove(itemPanel);
 
-                    playerInventory.unequip(playerInventory.getEquippedWeapon());
-                    playerInventory.remove(item);
-                    playerInventory.setEquippedWeapon((Weapon) item);
-                    TextGame.graphics.updatePlayer();
-                    TextGame.graphics.updateInventory();
+                    cons.gridy = 0;
+                    cons.gridx = 0;
+                    confirm.add(new JLabel("Are you sure you want to equip " + item.getDisplayName()), cons);
+
+                    if(!playerInventory.getEquippedWeapon().getName().equals(new Weapon().getName())){
+                        cons.gridy++;
+                        confirm.add(new JLabel("If you equip this you will unequip " + playerInventory.getEquippedWeapon().getDisplayName()), cons);
+                    }
+
+
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            remove(confirm);
+                            playerInventory.unequip(playerInventory.getEquippedWeapon());
+                            playerInventory.remove(item);
+                            playerInventory.setEquippedWeapon((Weapon) item);
+                            TextGame.graphics.updatePlayer();
+                            TextGame.graphics.updateInventory();
+                        }
+                    });
+
+                    cons.gridy++;
+
+                    confirm.add(confirmButtons, cons);
+                    confirmButtons.add(yes);
+                    confirmButtons.add(no);
+
+                    TextGame.graphics.revalidate();
+
                 }
             });
             buttons.add(equip);
@@ -176,16 +228,40 @@ public class PlayerInfo extends JComponent {
             equip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    playerInventory.unequip(playerInventory.getArmor(armor.getArmorType()));
-                    playerInventory.remove(item);
-                    playerInventory.equipArmor(armor);
-                    TextGame.graphics.updatePlayer();
-                    TextGame.graphics.updateInventory();
+                    remove(itemPanel);
+
+                    cons.gridy = 0;
+                    cons.gridx = 0;
+                    confirm.add(new JLabel("Are you sure you want to equip " + armor.getDisplayName()), cons);
+
+                    if(playerInventory.getArmor(armor.getArmorType()) != null){
+                        cons.gridy++;
+                        confirm.add(new JLabel("If you equip this you will unequip " + playerInventory.getArmor(armor.getArmorType()).getDisplayName()), cons);
+                    }
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            remove(confirm);
+                            playerInventory.unequip(playerInventory.getArmor(armor.getArmorType()));
+                            playerInventory.remove(item);
+                            playerInventory.equipArmor(armor);
+                            TextGame.graphics.updatePlayer();
+                            TextGame.graphics.updateInventory();
+                        }
+                    });
+                    cons.gridy++;
+
+                    confirm.add(confirmButtons, cons);
+                    confirmButtons.add(yes);
+                    confirmButtons.add(no);
+
+                    TextGame.graphics.revalidate();
                 }
             });
             buttons.add(equip);
-
         }
+
+            //  Adds the Exit option to the list, returning to the inventory view
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,6 +271,8 @@ public class PlayerInfo extends JComponent {
         });
 
         buttons.add(exit);
+
+            //gives the ItemDisplay button an action listener that creates the panel when called
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -222,7 +300,7 @@ public class PlayerInfo extends JComponent {
 
     public void updatePlayer() {
         StatManager stats = player.getStats();
-        Inventory inventory = player.getInventory();
+        Inventory playerInventory = player.getInventory();
 
         ItemDisplay[] armor = new ItemDisplay[4];
         armor[0] = equippedHead;
@@ -232,7 +310,7 @@ public class PlayerInfo extends JComponent {
 
         name.setText(player.getName());
         health.setText(player.healthBar());
-        coins.setText("" + inventory.getMoney());
+        coins.setText("" + playerInventory.getMoney());
 
         strength.setText("" + stats.getStrength().getStat());
         charisma.setText("" + stats.getCharisma().getStat());
@@ -241,10 +319,15 @@ public class PlayerInfo extends JComponent {
         level.setText("" + stats.getLevel());
 
         for (int i = 1; i <= 4; i++) {
-            if (inventory.getArmor(i) != null) {
-                armor[i - 1].setItem(inventory.getArmor(i));
+            if (playerInventory.getArmor(i) != null) {
+                armor[i - 1].setItem(playerInventory.getArmor(i));
                 createItemPanel(armor[i - 1]);
             }
+        }
+
+        equippedWeapon.setItem(playerInventory.getEquippedWeapon());
+        if(!equippedWeapon.getItem().getName().equals("Fist")){
+            createItemPanel(equippedWeapon);
         }
     }
 
@@ -261,9 +344,7 @@ public class PlayerInfo extends JComponent {
 
         for(int i = 0; i < 8; i++){
             try{
-                Item tempItem = playerInventory.get(i);
-
-                ItemDisplay temp = new ItemDisplay(tempItem);
+                ItemDisplay temp = new ItemDisplay(playerInventory.get(i));
 
                 createItemPanel(temp);
 

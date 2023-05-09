@@ -400,7 +400,11 @@ public class Inventory {
         unequip.displayEvent();
     }
     public void unequip(Item item) {
-        if(item instanceof Weapon) {
+        if(item instanceof Weapon && item.getName().equals("Fist")) {
+            equippedWeapon = new Weapon();
+            return;
+        }
+        else if(item instanceof Weapon){
             equippedWeapon = new Weapon();
         }
         else if(item instanceof Armor) {

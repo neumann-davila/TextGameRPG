@@ -42,7 +42,7 @@ public class GUI implements ActionListener{
         main.revalidate();
     }
     public GUI (){
-        main.setSize(700, 500);
+        main.setSize(800, 500);
 
         main.setLayout(new GridBagLayout());
         GridBagConstraints cons = new GridBagConstraints();
