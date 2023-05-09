@@ -13,7 +13,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ItemDisplay extends JButton {
+    Item item = null;
+
+    public Item getItem(){
+        return this.item;
+    }
+
     public void setItem(Item item) {
+        this.item = item;
         setText(item.getDisplayDescription());
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(item.getDisplayName()),
@@ -21,7 +28,7 @@ public class ItemDisplay extends JButton {
         ));
     }
     public ItemDisplay (Item item) {
-
+        this.item = item;
         setText(item.getDisplayDescription());
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(item.getDisplayName()),

@@ -8,7 +8,9 @@
 package finalProject.Graphics;
 
 import finalProject.CharacterTypes.*;
+import finalProject.Items.Armor;
 import finalProject.Items.Item;
+import finalProject.Items.Weapons.Weapon;
 import finalProject.TextGame;
 
 import javax.sql.rowset.spi.TransactionalWriter;
@@ -44,8 +46,179 @@ public class PlayerInfo extends JComponent {
 
     private JLabel coins = new JLabel("*");
 
-    GridBagConstraints cons = new GridBagConstraints();
+    private GridBagConstraints cons = new GridBagConstraints();
 
+
+
+    public void createItemPanel(ItemDisplay button){
+        Item item = button.getItem();
+
+        Inventory playerInventory = TextGame.player.getInventory();
+
+        JPanel itemPanel = new JPanel();
+        JPanel buttons = new JPanel();
+
+        JButton discard = new JButton("Discard");
+        JButton equip = new JButton("Equip");
+        JButton exit = new JButton("Exit");
+
+        cons.anchor = GridBagConstraints.NORTHWEST;
+
+
+
+        JPanel confirmButtons = new JPanel();
+        confirmButtons.setLayout(new GridLayout(2, 1));
+
+        JPanel confirm = new JPanel();
+        cons.gridy = 1;
+        cons.gridx = 1;
+        add(confirm, cons);
+
+
+        JButton yes = new JButton("Yes");
+        JButton no = new JButton("No");
+
+        discard.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                remove(itemPanel);
+
+
+                SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, item.getAmount(), 1);
+                JSpinner amountDiscard = new JSpinner(numberModel);
+
+
+                confirm.setLayout(new GridBagLayout());
+
+                cons.gridy = 0;
+                cons.gridx = 0;
+                confirm.add(new JLabel("Are you sure you want to remove " + item.getDisplayName()), cons);
+
+                no.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        remove(confirm);
+                        TextGame.graphics.updateInventory();
+                    }
+                });
+
+
+                if(item.getAmount() == 1){
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            playerInventory.remove(item);
+                            remove(confirm);
+                            TextGame.graphics.updateInventory();
+                        }
+                    });
+
+
+
+                    cons.gridy = 1;
+
+                    confirm.add(confirmButtons, cons);
+                    confirmButtons.add(yes);
+                    confirmButtons.add(no);
+
+                    TextGame.graphics.revalidate();
+
+                }
+                else if(item.getAmount() > 1){
+                    yes.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            playerInventory.remove(item, (Integer)amountDiscard.getValue());
+                            remove(confirm);
+                            TextGame.graphics.updateInventory();
+                        }
+                    });
+
+                    cons.gridy = 1;
+                    confirm.add(new JLabel("Please input the amount you want to remove"), cons);
+
+                    cons.gridy = 2;
+                    confirm.add(amountDiscard, cons);
+
+                    cons.gridy= 3;
+                    confirm.add(confirmButtons, cons);
+                    confirmButtons.add(yes);
+                    confirmButtons.add(no);
+
+                    TextGame.graphics.revalidate();
+
+                }
+
+            }
+        });
+
+        buttons.add(discard);
+
+        if(item instanceof Weapon){
+
+            equip.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    playerInventory.unequip(playerInventory.getEquippedWeapon());
+                    playerInventory.remove(item);
+                    playerInventory.setEquippedWeapon((Weapon) item);
+                    TextGame.graphics.updatePlayer();
+                    TextGame.graphics.updateInventory();
+                }
+            });
+            buttons.add(equip);
+
+        }
+        else if(item instanceof Armor) {
+            Armor armor = (Armor) item;
+
+            equip.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    playerInventory.unequip(playerInventory.getArmor(armor.getArmorType()));
+                    playerInventory.remove(item);
+                    playerInventory.equipArmor(armor);
+                    TextGame.graphics.updatePlayer();
+                    TextGame.graphics.updateInventory();
+                }
+            });
+            buttons.add(equip);
+
+        }
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                remove(itemPanel);
+                TextGame.graphics.updateInventory();
+            }
+        });
+
+        buttons.add(exit);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                remove(inventory);
+                cons.gridy = 1;
+                cons.gridx = 1;
+                add(itemPanel, cons);
+                TextGame.graphics.revalidate();
+            }
+        });
+
+
+        itemPanel.setLayout(new GridBagLayout());
+
+        buttons.setLayout(new GridLayout(3, 1));
+
+        cons.gridy = 0;
+        cons.gridx = 0;
+        itemPanel.add(new JLabel("What would you like to do with " + button.getItem().getDisplayName()));
+
+        cons.gridy = 1;
+        itemPanel.add(buttons, cons);
+
+    }
 
     public void updatePlayer() {
         StatManager stats = player.getStats();
@@ -70,6 +243,7 @@ public class PlayerInfo extends JComponent {
         for (int i = 1; i <= 4; i++) {
             if (inventory.getArmor(i) != null) {
                 armor[i - 1].setItem(inventory.getArmor(i));
+                createItemPanel(armor[i - 1]);
             }
         }
     }
@@ -90,30 +264,8 @@ public class PlayerInfo extends JComponent {
                 Item tempItem = playerInventory.get(i);
 
                 ItemDisplay temp = new ItemDisplay(tempItem);
-                temp.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ItemPanel panel = new ItemPanel(tempItem);
-                        JButton exit = new JButton("Exit");
-                        exit.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                remove(panel);
-                                TextGame.graphics.updateInventory();
-                            }
-                        });
 
-                        cons.anchor = GridBagConstraints.NORTHWEST;
-
-                        panel.add(exit);
-
-                        remove(inventory);
-                        cons.gridy = 1;
-                        cons.gridx = 1;
-                        add(panel, cons);
-                        TextGame.graphics.revalidate();
-                    }
-                });
+                createItemPanel(temp);
 
                 this.inventory.add(temp);
             }
