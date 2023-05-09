@@ -11,9 +11,13 @@ import finalProject.CharacterTypes.*;
 import finalProject.Items.Item;
 import finalProject.TextGame;
 
+import javax.sql.rowset.spi.TransactionalWriter;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class PlayerInfo extends JComponent {
 
@@ -40,9 +44,10 @@ public class PlayerInfo extends JComponent {
 
     private JLabel coins = new JLabel("*");
 
+    GridBagConstraints cons = new GridBagConstraints();
 
 
-    public void updatePlayer(){
+    public void updatePlayer() {
         StatManager stats = player.getStats();
         Inventory inventory = player.getInventory();
 
@@ -50,7 +55,7 @@ public class PlayerInfo extends JComponent {
         armor[0] = equippedHead;
         armor[1] = equippedChest;
         armor[2] = equippedLeg;
-        armor[3] =equippedBoot;
+        armor[3] = equippedBoot;
 
         name.setText(player.getName());
         health.setText(player.healthBar());
@@ -62,13 +67,67 @@ public class PlayerInfo extends JComponent {
         exp.setText("" + stats.getXp().getStat());
         level.setText("" + stats.getLevel());
 
-        for(int i = 1; i <= 4; i++) {
-            if(inventory.getArmor(i) != null) {
+        for (int i = 1; i <= 4; i++) {
+            if (inventory.getArmor(i) != null) {
                 armor[i - 1].setItem(inventory.getArmor(i));
             }
         }
+    }
+
+    public void clearInventory(){
+        for(int i = 0;i < 8; i++){
+            inventory.remove(0);
+        }
+    }
+    public void updateInventory() {
+        ArrayList<Item> playerInventory = player.getInventory().getInventory();
+
+        clearInventory();
 
 
+        for(int i = 0; i < 8; i++){
+            try{
+                Item tempItem = playerInventory.get(i);
+
+                ItemDisplay temp = new ItemDisplay(tempItem);
+                temp.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ItemPanel panel = new ItemPanel(tempItem);
+                        JButton exit = new JButton("Exit");
+                        exit.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                remove(panel);
+                                TextGame.graphics.updateInventory();
+                            }
+                        });
+
+                        cons.anchor = GridBagConstraints.NORTHWEST;
+
+                        panel.add(exit);
+
+                        remove(inventory);
+                        cons.gridy = 1;
+                        cons.gridx = 1;
+                        add(panel, cons);
+                        TextGame.graphics.revalidate();
+                    }
+                });
+
+                this.inventory.add(temp);
+            }
+            catch(IndexOutOfBoundsException e) {
+                this.inventory.add(new ItemDisplay());
+            }
+            catch(Exception e){
+                System.out.println(e);
+            }
+
+            cons.gridy = 1;
+            cons.gridx = 1;
+            add(this.inventory, cons);
+        }
     }
     private void buildMainPanel(){
 
@@ -84,7 +143,6 @@ public class PlayerInfo extends JComponent {
 
         mainPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints cons = new GridBagConstraints();
         cons.anchor = GridBagConstraints.WEST;
 
         mainPanel.add(genInfo);
@@ -109,16 +167,16 @@ public class PlayerInfo extends JComponent {
         genInfo.add(new JLabel("Exp: "), cons);
 
         cons.gridx = 0;
-        cons.gridy = 3;
+        cons.gridy = 4;
         genInfo.add(new JLabel("Head: "), cons);
 
-        cons.gridy = 4;
+        cons.gridy = 5;
         genInfo.add(new JLabel("Chest: "), cons);
 
-        cons.gridy = 5;
+        cons.gridy = 6;
         genInfo.add(new JLabel("Legs: "), cons);
 
-        cons.gridy = 6;
+        cons.gridy = 7;
         genInfo.add(new JLabel("Feet: "), cons);
 
             // values that correlate to col 1
@@ -136,16 +194,16 @@ public class PlayerInfo extends JComponent {
         cons.gridy = 2;
         genInfo.add(exp, cons);
 
-        cons.gridy = 3;
+        cons.gridy = 4;
         genInfo.add(equippedHead, cons);
 
-        cons.gridy = 4;
+        cons.gridy = 5;
         genInfo.add(equippedChest, cons);
 
-        cons.gridy = 5;
+        cons.gridy = 6;
         genInfo.add(equippedLeg, cons);
 
-        cons.gridy = 6;
+        cons.gridy = 7;
         genInfo.add(equippedBoot, cons);
 
         // Start of Column 2
@@ -195,44 +253,43 @@ public class PlayerInfo extends JComponent {
 
         //  Inventory Menu
 
-        cons.gridy = 1;
-        cons.gridx = 1;
-        add(inventory, cons);
-
-        inventory.setLayout(new GridLayout(4,2));
-
-        inventory.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
-        inventory.add(new ItemDisplay());
 
 
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
+        inventory.add(new ItemDisplay());
     }
 
     public PlayerInfo() {
         setBorder(BorderFactory.createLineBorder(Color.black));
         setBorder(new EmptyBorder(10, 10 ,10, 10));
-        GridBagConstraints mainCons = new GridBagConstraints();
-        mainCons.anchor = GridBagConstraints.WEST;
+        cons.anchor = GridBagConstraints.WEST;
 
 
         setLayout(new GridBagLayout());
 
-        mainCons.gridy = 0;
-        add(name, mainCons);
+        cons.gridy = 0;
+        add(name, cons);
 
-        mainCons.gridx = 1;
-        mainCons.anchor = GridBagConstraints.CENTER;
-        add(new JLabel("Inventory"), mainCons);
+        cons.gridx = 1;
+        cons.anchor = GridBagConstraints.CENTER;
+        add(new JLabel("Inventory"), cons);
 
-        mainCons.gridy = 1;
-        mainCons.gridx = 0;
-        add(mainPanel, mainCons);
+        cons.gridy = 1;
+        cons.gridx = 0;
+        add(mainPanel, cons);
+
+        cons.gridy = 1;
+        cons.gridx = 1;
+        add(inventory, cons);
+
+        inventory.setLayout(new GridLayout(4,2));
+        inventory.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         buildMainPanel();
 

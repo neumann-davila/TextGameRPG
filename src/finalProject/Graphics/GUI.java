@@ -33,6 +33,14 @@ public class GUI implements ActionListener{
         playerInfo.updatePlayer();
     }
 
+    public void updateInventory(){
+        playerInfo.updateInventory();
+        main.revalidate();
+    }
+
+    public void revalidate() {
+        main.revalidate();
+    }
     public GUI (){
         main.setSize(700, 500);
 

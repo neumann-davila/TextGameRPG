@@ -16,6 +16,7 @@ import finalProject.EventStructure.Event;
 import finalProject.Info;
 import finalProject.Items.*;
 import finalProject.Items.Weapons.Weapon;
+import finalProject.TextGame;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -65,7 +66,7 @@ public class Inventory {
 
         if(newItem instanceof Weapon) {
             interact.addChoice(new Choice("Equip", () -> {
-                if(equippedWeapon != null) {
+                if(!equippedWeapon.equals(new Weapon())) {
                     addItem(equippedWeapon);
                 }
                 remove(newItem);
@@ -294,6 +295,7 @@ public class Inventory {
         else {
             System.out.println("No space in Inventory");
         }
+        TextGame.graphics.updateInventory();
     }
 
     public boolean contains(String itemName) {
@@ -399,7 +401,7 @@ public class Inventory {
     }
     public void unequip(Item item) {
         if(item instanceof Weapon) {
-            equippedWeapon = null;
+            equippedWeapon = new Weapon();
         }
         else if(item instanceof Armor) {
             Armor armor = (Armor)item;

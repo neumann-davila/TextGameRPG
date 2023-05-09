@@ -33,11 +33,11 @@ public class Weapon extends Item {
 	@Override public String getDisplayDescription() {
 		String summary = "";
 
-		summary += "\n";
-		summary += "     Damage: " + damageMin + " - " + damageMax + "\n";
-		summary += "     Hit Chance: " + hitChance + "%";
+		summary += "<html>Price: " + price + " Coins<br />"+
+				"     Damage: " + damageMin + " - " + damageMax + "<br />" +
+				"     Hit Chance: " + hitChance + "%<html/>";
 
-		return (super.getDisplayDescription() + summary);
+		return summary;
 	}
 		//	creates an attack using random values between the min and max
 	public int attack() {

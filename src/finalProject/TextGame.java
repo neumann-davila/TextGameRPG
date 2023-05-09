@@ -24,7 +24,7 @@ public class TextGame {
 		//	Main Player declaration
 	public static Player player =  new Player();
 
-	public static GUI game = new GUI();
+	public static GUI graphics = new GUI();
 
 
 	public static void pause() {
@@ -303,7 +303,7 @@ public class TextGame {
 	public static void run() {
 		createPlayer();
 
-		game.updatePlayer();
+		graphics.updatePlayer();
 
 		createPrisonWall(0);
 
