@@ -267,6 +267,9 @@ public class Inventory {
 
 
     public void addItem(Item newItem) {
+        if(newItem == null){
+            return;
+        }
         if(inventory.size() < 8) {
                 //  checks if the item is stackable
             if(newItem.isStackable()) {

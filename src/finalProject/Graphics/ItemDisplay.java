@@ -20,12 +20,21 @@ public class ItemDisplay extends JButton {
     }
 
     public void setItem(Item item) {
-        this.item = item;
-        setText(item.getDisplayDescription());
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(item.getDisplayName()),
-                BorderFactory.createEmptyBorder(0 ,20, 0, 20)
-        ));
+        if(item != null) {
+            this.item = item;
+            setText(item.getDisplayDescription());
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createTitledBorder(item.getDisplayName()),
+                    BorderFactory.createEmptyBorder(0, 20, 0, 20)
+            ));
+        }
+        else{
+            setText("N/A");
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createTitledBorder("Empty"),
+                    BorderFactory.createEmptyBorder(0 ,30, 0, 30)
+            ));
+        }
     }
     public ItemDisplay (Item item) {
         this.item = item;
