@@ -45,9 +45,9 @@ public class Event {
 									//	---Display Methods---	\\
 	
 	public void displayEvent() {
-
-		TextGame.graphics.setEvent(this);
 		//	automatically runs if there is only one choice in the Event
+		TextGame.graphics.setEvent(this);
+
 		if (eventChoices.size() == 1) {
 			dynamicPrint(description);
 			System.out.println("");

@@ -332,9 +332,9 @@ public class TextGame {
 		pause();
 	}
 	public static void main (String[] args){
-
 		System.out.println("\033[0;94mWelcome to Eriador\nPress enter to start");
 		input.nextLine();
+
 		tutorial();
 
 		run();

@@ -18,10 +18,12 @@ public class GUI{
     private JFrame main = new JFrame("TextRPG");
 
     private PlayerInfo playerInfo = new PlayerInfo();
-    private JPanel event = new JPanel();
+    private EventPanel event = new EventPanel();
+    GridBagConstraints cons = new GridBagConstraints();
+
 
     public void setEvent(Event event){
-        this.event = new EventPanel(event);
+    this.event.setEvent(event);
     }
     public void updatePlayer() {
         playerInfo.updatePlayer();
@@ -32,21 +34,29 @@ public class GUI{
         main.revalidate();
     }
 
+    public void addExtra(JPanel panel){
+        cons.gridy = 1;
+        main.add(panel, cons);
+        revalidate();
+    }
+
+    public void removeExtra(){
+        main.remove(1);
+    }
     public void revalidate() {
         main.revalidate();
     }
     public GUI (){
-        main.setSize(800, 500);
+        main.setSize(800, 700);
 
         main.setLayout(new GridBagLayout());
-        GridBagConstraints cons = new GridBagConstraints();
         cons.ipady = 10;
         cons.ipadx = 10;
 
         cons.gridy = 0;
         main.add(event, cons);
 
-        cons.gridy = 1;
+        cons.gridy = 2;
         main.add(playerInfo, cons);
 
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // or 3, to stop the application from running when it is closed

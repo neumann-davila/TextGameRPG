@@ -7,56 +7,46 @@
  */
 package finalProject.Graphics;
 
-import finalProject.EventStructure.*;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
 import finalProject.TextGame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class EventPanel extends JPanel {
 
-
+   JPanel descriptions = new JPanel();
     JPanel choices = new JPanel();
     ButtonGroup group = new ButtonGroup();
     ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
     ArrayList<Choice> eventChoices;
 
-    JButton submit = new JButton();
+    JButton submit = new JButton("Submit Choice");
 
     GridBagConstraints cons = new GridBagConstraints();
 
-    public void slowText(String[] strings) {
-        cons.gridy = 0;
-        cons.gridx = 0;
 
-        for(String temp: strings){
-            add(new JLabel(temp));
 
-            TextGame.graphics.revalidate();
-            try{
-                Thread.sleep(60);
-            }
-            catch(Exception e){
-                System.out.println(e + "\n SLOW TEXT");
-            }
-            cons.gridy++;
-            cons.gridx++;
+    public void setEvent(Event event){
 
-        }
-    }
+        System.out.println("Event run");
 
-    public void revealLines(){
-        // Possibly flashes lines aws the appear
-    }
+        eventChoices.clear();
+        buttons.clear();
 
-    public EventPanel(Event event){
-        setLayout(new GridBagLayout());
-        cons.anchor = GridBagConstraints.NORTHWEST;
 
         eventChoices = event.getChoices();
+
+        cons.anchor = GridBagConstraints.NORTHWEST;
+
+        cons.gridy = 0;
+        add(descriptions);
+        slowText(event.getDescription());
+
         for(Choice choice: eventChoices){
             choices.setLayout(new GridLayout(eventChoices.size(), 1));
 
@@ -66,19 +56,108 @@ public class EventPanel extends JPanel {
             group.add(temp);
         }
 
-        slowText(event.getDescription());
 
         cons.gridy++;
-        cons.gridx++;
+
+        add(choices, cons);
+        System.out.println("Event run");
+
+        cons.gridy++;
+        cons.anchor = GridBagConstraints.CENTER;
+        add(submit, cons);
+        TextGame.graphics.revalidate();
+
+    }
+
+    public void slowText(String[] strings) {
+        cons.gridy = 0;
+        descriptions.setLayout(new GridBagLayout());
+
+        for(String temp: strings){
+            descriptions.add(new JLabel(temp), cons);
+
+            TextGame.graphics.revalidate();
+//            try{
+//                Thread.sleep(200);
+//            }
+//            catch(Exception e){
+//                System.out.println(e + "\n SLOW TEXT");
+//            }
+            cons.gridy++;
+
+        }
+    }
+
+    public EventPanel(){
+
+        Event mainMenu = new Event("Welcome to Eriador!", false);
+
+        mainMenu.addChoice(new Choice("Start Game", () -> {TextGame.run();}));
+        mainMenu.addChoice(new Choice("Tutorial", () -> {TextGame.tutorial();}));
+
+        eventChoices = mainMenu.getChoices();
+
+        setLayout(new GridBagLayout());
+        cons.anchor = GridBagConstraints.CENTER;
+
+        cons.gridy = 0;
+        add(descriptions, cons);
+        descriptions.add(new JLabel("Welcome to Eriador"));
+
+        cons.anchor = GridBagConstraints.NORTHWEST;
+
+        for(Choice choice: eventChoices){
+            choices.setLayout(new GridLayout(eventChoices.size(), 1));
+
+            JRadioButton temp = new JRadioButton(choice.getDescription());
+            choices.add(temp);
+            buttons.add(temp);
+            group.add(temp);
+        }
+
+
+        cons.gridy++;
+
         add(choices, cons);
 
         cons.gridy++;
-        cons.gridx++;
         cons.anchor = GridBagConstraints.CENTER;
-        add(submit);
+        add(submit, cons);
 
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(JRadioButton button: buttons) {
+                    if(button.isSelected()){
+                        for(Choice choice: eventChoices){
+                            if(choice.getDescription().equals(button.getText())){
 
-        TextGame.graphics.revalidate();
+                                Thread thread = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for(Component component: choices.getComponents()){
+                                            choices.remove(component);
+                                        }
+                                        for(Component component: descriptions.getComponents()) {
+                                            descriptions.remove(component);
+                                        }
+                                        remove(choices);
+                                        remove(submit);
+                                        remove(descriptions);
+                                        TextGame.graphics.revalidate();
+                                        choice.choiceRun();
+                                    }
+                                });
+
+                                thread.start();
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
 
     }
 }

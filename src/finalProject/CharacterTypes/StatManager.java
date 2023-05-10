@@ -9,6 +9,9 @@
 
 package finalProject.CharacterTypes;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -17,6 +20,8 @@ import finalProject.Info;
 import finalProject.TextGame;
 import finalProject.EventStructure.Choice;
 import finalProject.EventStructure.Event;
+
+import javax.swing.*;
 
 public class StatManager {
 	Scanner input = new Scanner(System.in);
@@ -77,28 +82,133 @@ public class StatManager {
 	
 	
 	public void setStats() {
-		
+
+
+		JPanel guiInput = new JPanel();
+		guiInput.setLayout(new GridBagLayout());
+		GridBagConstraints cons = new GridBagConstraints();
+
+		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, totalStatPoints, 1);
+		JSpinner amountAdd = new JSpinner(numberModel);
+
+		JButton submit = new JButton("Submit");
+
+		cons.gridy = 0;
+		guiInput.add(new JLabel("How many points would you like to add to this stat?"));
+
+
+		cons.gridy++;
+		guiInput.add(amountAdd, cons);
+		guiInput.add(submit, cons);
+
+
+
 		int tempStr = strength.getStat();
 		int tempCha = charisma.getStat();
 		int tempDex = dexterity.getStat();
-		
-		while(totalStatPoints > 0) {
-			Event setStats = new Event("You have " + totalStatPoints + " stat points`Please chose which stat you would like to increase", false);
-			
-			setStats.addChoice(new Choice("" + strength, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {strength.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
-			setStats.addChoice(new Choice("" + dexterity, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {dexterity.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
-			setStats.addChoice(new Choice("" + charisma, () -> {System.out.println("How many points would you like to add to this stat?");int tempInt = input.nextInt();if(tempInt <= totalStatPoints && tempInt > 0) {charisma.adjustStat(tempInt);totalStatPoints -= tempInt;} else{System.out.println("You can not add " + tempInt + " stat points.");}}));
-			setStats.addChoice(new Choice("Reset to previous stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);}));
-			setStats.addChoice(new Choice("Info", () -> {info.display();}));
 
-			setStats.displayEvent();
-		}
 		Event confirmStats = new Event("Are these the stats you wish to keep?`" + this, false);
-		
+
 		confirmStats.addChoice(new Choice("Confirm Stats", () -> {TextGame.player.adjustMaxHealth(strength.getStat() - tempStr);}));
 		confirmStats.addChoice(new Choice("Reset Stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);setStats();}));
-		
-		confirmStats.displayEvent();
+
+		Event amountInc = new Event("How many points would you like to add to this stat?");
+
+		Event setStats = new Event("You have " + totalStatPoints + " stat points`Please chose which stat you would like to increase", false);
+
+		setStats.addChoice(new Choice("" + strength, () -> {
+
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
+			submit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TextGame.graphics.removeExtra();
+					strength.adjustStat(tempInt);
+					totalStatPoints -= tempInt;
+					if(totalStatPoints > 0){
+						setStats();
+					}
+					else{
+						confirmStats.displayEvent();
+					}
+				}
+			});
+			TextGame.graphics.addExtra(guiInput);
+			TextGame.graphics.revalidate();
+
+
+			if(tempInt <= totalStatPoints && tempInt > 0) {
+				strength.adjustStat(tempInt);
+				totalStatPoints -= tempInt;
+			}
+			else{
+				System.out.println("You can not add " + tempInt + " stat points.");
+			}
+		}));
+		setStats.addChoice(new Choice("" + dexterity, () -> {
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
+			submit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TextGame.graphics.removeExtra();
+					dexterity.adjustStat(tempInt);
+					totalStatPoints -= tempInt;
+
+					if(totalStatPoints > 0){
+						setStats();
+					}
+					else{
+						confirmStats.displayEvent();
+					}
+
+
+				}
+			});
+			TextGame.graphics.addExtra(guiInput);
+			TextGame.graphics.revalidate();
+
+
+
+			if(tempInt <= totalStatPoints && tempInt > 0) {
+				dexterity.adjustStat(tempInt);
+				totalStatPoints -= tempInt;}
+			else{
+				System.out.println("You can not add " + tempInt + " stat points.");
+			}
+		}));
+		setStats.addChoice(new Choice("" + charisma, () -> {
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
+			submit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TextGame.graphics.removeExtra();
+					charisma.adjustStat(tempInt);
+					totalStatPoints -= tempInt;
+					if(totalStatPoints > 0){
+						setStats();
+					}
+					else{
+						confirmStats.displayEvent();
+					}
+				}
+			});
+			TextGame.graphics.addExtra(guiInput);
+
+			if(tempInt <= totalStatPoints && tempInt > 0) {
+				charisma.adjustStat(tempInt);
+				totalStatPoints -= tempInt;
+			}
+			else{
+				System.out.println("You can not add " + tempInt + " stat points.");
+			}
+		}));
+		setStats.addChoice(new Choice("Reset to previous stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);}));
+		setStats.addChoice(new Choice("Info", () -> {info.display();}));
+
+		setStats.displayEvent();
 	}
 	
 		public void resetGame() {
