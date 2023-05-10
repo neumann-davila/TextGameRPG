@@ -7,28 +7,22 @@
  */
 package finalProject.Graphics;
 
+import finalProject.EventStructure.Event;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GUI implements ActionListener{
+public class GUI{
 
     private JFrame main = new JFrame("TextRPG");
 
-    private Panel mainTop = new Panel();
-    private Panel mainBottom = new Panel();
-
     private PlayerInfo playerInfo = new PlayerInfo();
-    private Panel event;
-    private Panel location = new Panel();
+    private JPanel event = new JPanel();
 
-    private JLabel balls = new JLabel("tree");
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+    public void setEvent(Event event){
+        this.event = new EventPanel(event);
     }
-
     public void updatePlayer() {
         playerInfo.updatePlayer();
     }
@@ -49,22 +43,11 @@ public class GUI implements ActionListener{
         cons.ipady = 10;
         cons.ipadx = 10;
 
-
-        JLabel location = new JLabel("");
-
-        location.add(balls);
-        mainTop.add(location);
         cons.gridy = 0;
-        main.add(mainTop, cons);
+        main.add(event, cons);
 
         cons.gridy = 1;
-        main.add(mainBottom, cons);
-
-        cons.gridy = 0;
-        cons.gridx = 1;
-        mainBottom.add(playerInfo, cons);
-
-        balls.setText("stuff");
+        main.add(playerInfo, cons);
 
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // or 3, to stop the application from running when it is closed
         main.setVisible(true);

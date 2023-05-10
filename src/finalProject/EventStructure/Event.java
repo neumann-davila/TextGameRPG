@@ -34,6 +34,10 @@ public class Event {
 	private boolean isDefault = true;
 
 
+	public String[] getDescription(){
+		return this.description;
+	}
+
 	public Boolean isDefault() {
 		return isDefault;
 	}
@@ -41,6 +45,8 @@ public class Event {
 									//	---Display Methods---	\\
 	
 	public void displayEvent() {
+
+		TextGame.graphics.setEvent(this);
 		//	automatically runs if there is only one choice in the Event
 		if (eventChoices.size() == 1) {
 			dynamicPrint(description);
