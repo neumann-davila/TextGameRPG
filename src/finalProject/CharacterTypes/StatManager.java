@@ -86,20 +86,11 @@ public class StatManager {
 
 		JPanel guiInput = new JPanel();
 		guiInput.setLayout(new GridBagLayout());
-		GridBagConstraints cons = new GridBagConstraints();
 
 		SpinnerNumberModel numberModel = new SpinnerNumberModel(1, 1, totalStatPoints, 1);
 		JSpinner amountAdd = new JSpinner(numberModel);
 
-		JButton submit = new JButton("Submit");
-
-		cons.gridy = 0;
-		guiInput.add(new JLabel("How many points would you like to add to this stat?"));
-
-
-		cons.gridy++;
-		guiInput.add(amountAdd, cons);
-		guiInput.add(submit, cons);
+		guiInput.add(amountAdd);
 
 
 
@@ -118,25 +109,32 @@ public class StatManager {
 
 		setStats.addChoice(new Choice("" + strength, () -> {
 
-			System.out.println("How many points would you like to add to this stat?");
-			int tempInt = input.nextInt();
-			submit.addActionListener(new ActionListener() {
+
+			TextGame.graphics.setCustomPanel(amountInc, guiInput, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					TextGame.graphics.removeExtra();
-					strength.adjustStat(tempInt);
-					totalStatPoints -= tempInt;
-					if(totalStatPoints > 0){
-						setStats();
-					}
-					else{
-						confirmStats.displayEvent();
-					}
+					Thread thread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							System.out.println("run");
+							strength.adjustStat((Integer)amountAdd.getValue());
+							totalStatPoints -= (Integer)amountAdd.getValue();
+							if(totalStatPoints > 0){
+								System.out.println("reset");
+								setStats();
+							}
+							else{
+								confirmStats.displayEvent();
+							}
+						}
+					});
+					thread.start();
+
 				}
 			});
-			TextGame.graphics.addExtra(guiInput);
-			TextGame.graphics.revalidate();
 
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
 
 			if(tempInt <= totalStatPoints && tempInt > 0) {
 				strength.adjustStat(tempInt);
@@ -146,31 +144,33 @@ public class StatManager {
 				System.out.println("You can not add " + tempInt + " stat points.");
 			}
 		}));
+
 		setStats.addChoice(new Choice("" + dexterity, () -> {
-			System.out.println("How many points would you like to add to this stat?");
-			int tempInt = input.nextInt();
-			submit.addActionListener(new ActionListener() {
+
+			TextGame.graphics.setCustomPanel(amountInc, guiInput, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					TextGame.graphics.removeExtra();
-					dexterity.adjustStat(tempInt);
-					totalStatPoints -= tempInt;
+					Thread thread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							dexterity.adjustStat((Integer)amountAdd.getValue());
+							totalStatPoints -= (Integer)amountAdd.getValue();
 
-					if(totalStatPoints > 0){
-						setStats();
-					}
-					else{
-						confirmStats.displayEvent();
-					}
+							if(totalStatPoints > 0){
+								setStats();
+							}
+							else{
+								confirmStats.displayEvent();
+							}
+						}
+					});
 
 
 				}
 			});
-			TextGame.graphics.addExtra(guiInput);
-			TextGame.graphics.revalidate();
 
-
-
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
 			if(tempInt <= totalStatPoints && tempInt > 0) {
 				dexterity.adjustStat(tempInt);
 				totalStatPoints -= tempInt;}
@@ -178,25 +178,31 @@ public class StatManager {
 				System.out.println("You can not add " + tempInt + " stat points.");
 			}
 		}));
+
 		setStats.addChoice(new Choice("" + charisma, () -> {
-			System.out.println("How many points would you like to add to this stat?");
-			int tempInt = input.nextInt();
-			submit.addActionListener(new ActionListener() {
+
+			TextGame.graphics.setCustomPanel(amountInc, guiInput, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					TextGame.graphics.removeExtra();
-					charisma.adjustStat(tempInt);
-					totalStatPoints -= tempInt;
-					if(totalStatPoints > 0){
-						setStats();
-					}
-					else{
-						confirmStats.displayEvent();
-					}
+					Thread thread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							charisma.adjustStat((Integer)amountAdd.getValue());
+							totalStatPoints -= (Integer)amountAdd.getValue();
+							if(totalStatPoints > 0){
+								setStats();
+							}
+							else{
+								confirmStats.displayEvent();
+							}
+						}
+					});
+
 				}
 			});
-			TextGame.graphics.addExtra(guiInput);
 
+			System.out.println("How many points would you like to add to this stat?");
+			int tempInt = input.nextInt();
 			if(tempInt <= totalStatPoints && tempInt > 0) {
 				charisma.adjustStat(tempInt);
 				totalStatPoints -= tempInt;
@@ -205,6 +211,8 @@ public class StatManager {
 				System.out.println("You can not add " + tempInt + " stat points.");
 			}
 		}));
+
+
 		setStats.addChoice(new Choice("Reset to previous stats", () -> {totalStatPoints +=(strength.getStat() - tempStr);totalStatPoints +=(dexterity.getStat() - tempDex);totalStatPoints +=(charisma.getStat() - tempCha);strength.setStat(tempStr);dexterity.setStat(tempDex);charisma.setStat(tempCha);}));
 		setStats.addChoice(new Choice("Info", () -> {info.display();}));
 

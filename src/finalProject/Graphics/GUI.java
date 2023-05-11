@@ -34,15 +34,10 @@ public class GUI{
         main.revalidate();
     }
 
-    public void addExtra(JPanel panel){
-        cons.gridy = 1;
-        main.add(panel, cons);
-        revalidate();
+    public void setCustomPanel(Event event, JPanel panel, ActionListener listener){
+        this.event.setCustomPanel(event, panel, listener);
     }
 
-    public void removeExtra(){
-        main.remove(1);
-    }
     public void revalidate() {
         main.revalidate();
     }
